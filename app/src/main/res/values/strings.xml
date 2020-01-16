@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MovieList</string>
+    <string name="movie_image">Изображение</string>
+    <string name="button_details">Детали</string>
+    <string name="tools_name">Название</string>
+    <string name="invite_friend">Пригласить друга</string>
+    <string name="try_app">Попробуй новое приложение со списком фильмов!</string>
+    <string name="is_liked">Нравится</string>
+    <string name="comment">Комментарий</string>
 </resources>
