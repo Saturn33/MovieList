@@ -59,12 +59,15 @@ class ListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        resumeSelection()
+    }
+
+    private fun resumeSelection() {
         for (i in 0..2) {
             try {
                 val movie = Storage.movies.elementAt(i)
-                val text = findViewById<TextView>(Storage.getTextId(i))
                 if (movie.checked) {
-                    text.setTextColor(resources.getColor(R.color.colorAccent, theme))
+                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(resources.getColor(R.color.colorAccent, theme))
                 }
             } catch (e: IndexOutOfBoundsException) {
             }
@@ -75,7 +78,7 @@ class ListActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.let {
-                val reaction = it.getParcelableExtra<ReactionDTO>(REACTION_KEY) ?: ReactionDTO()
+                val reaction = it.getParcelableExtra(REACTION_KEY) ?: ReactionDTO()
                 Log.d(TAG, "Liked: ${reaction.liked}")
                 Log.d(TAG, "Comment: ${reaction.comment}")
             }
