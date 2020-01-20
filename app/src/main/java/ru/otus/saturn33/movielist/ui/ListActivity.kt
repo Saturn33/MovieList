@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -18,9 +17,9 @@ class ListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_list)
 
-        for (i in 0..2) {
+        for (i in 0..3) {
             try {
                 val movie = Storage.movies.elementAt(i)
                 val btn = findViewById<Button>(Storage.getButtonId(i))
@@ -45,7 +44,7 @@ class ListActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<ImageButton>(R.id.invite).setOnClickListener {
+        findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
@@ -63,11 +62,16 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun resumeSelection() {
-        for (i in 0..2) {
+        for (i in 0..3) {
             try {
                 val movie = Storage.movies.elementAt(i)
                 if (movie.checked) {
-                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(resources.getColor(R.color.colorAccent, theme))
+                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(
+                        resources.getColor(
+                            R.color.colorAccent,
+                            theme
+                        )
+                    )
                 }
             } catch (e: IndexOutOfBoundsException) {
             }

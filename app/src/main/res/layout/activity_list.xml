@@ -11,14 +11,16 @@
         android:layout_height="wrap_content"
         tools:context=".ui.ListActivity">
 
-        <ImageButton
+        <TextView
             android:id="@+id/invite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_small"
-            android:contentDescription="@string/invite_friend"
-            android:src="@drawable/invite_friend"
+            android:drawableStart="@drawable/invite_friend"
+            android:drawablePadding="@dimen/margin_small"
+            android:text="@string/invite_friend"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,7 +32,7 @@
             android:contentDescription="@string/movie_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/invite"
             tools:src="@drawable/ic_launcher_foreground" />
 
         <Button
@@ -44,10 +46,10 @@
 
         <TextView
             android:id="@+id/name0"
+            style="@style/MovieTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_mid"
-            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="@id/button0"
             app:layout_constraintStart_toEndOf="@id/button0"
             app:layout_constraintTop_toTopOf="@id/button0"
@@ -75,10 +77,10 @@
 
         <TextView
             android:id="@+id/name1"
+            style="@style/MovieTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_mid"
-            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="@id/button1"
             app:layout_constraintStart_toEndOf="@id/button1"
             app:layout_constraintTop_toTopOf="@id/button1"
@@ -106,13 +108,44 @@
 
         <TextView
             android:id="@+id/name2"
+            style="@style/MovieTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_mid"
-            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="@id/button2"
             app:layout_constraintStart_toEndOf="@id/button2"
             app:layout_constraintTop_toTopOf="@id/button2"
+            tools:text="@string/tools_name" />
+
+        <ImageView
+            android:id="@+id/image3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_mid"
+            android:contentDescription="@string/movie_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button2"
+            tools:src="@drawable/ic_launcher_foreground" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_mid"
+            android:text="@string/button_details"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image3" />
+
+        <TextView
+            android:id="@+id/name3"
+            style="@style/MovieTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_mid"
+            app:layout_constraintBottom_toBottomOf="@id/button3"
+            app:layout_constraintStart_toEndOf="@id/button3"
+            app:layout_constraintTop_toTopOf="@id/button3"
             tools:text="@string/tools_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
