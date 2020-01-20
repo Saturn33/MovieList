@@ -7,4 +7,8 @@
     <string name="try_app">Let\'s try our new app with movie list!</string>
     <string name="is_liked">Like</string>
     <string name="comment">Comment</string>
+    <string name="dialog_exit_title">Advanced exit</string>
+    <string name="dialog_exit_text">Are you sure want to exit?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.ReactionDTO
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 
 class ListActivity : AppCompatActivity() {
 
@@ -87,6 +88,14 @@ class ListActivity : AppCompatActivity() {
                 Log.d(TAG, "Comment: ${reaction.comment}")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val dialog = ExitDialog(this)
+        dialog.setOnCancelListener {
+            super.onBackPressed()
+        }
+        dialog.show()
     }
 
     companion object {
