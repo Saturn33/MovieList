@@ -8,5 +8,6 @@ data class MovieDTO(
     val name: String,
     val description: String,
     val imageId: Int,
-    var checked: Boolean = false
+    var checked: Boolean = false,
+    var inFav: Boolean = false
 ) : Parcelable

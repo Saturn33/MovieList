@@ -1,20 +1,21 @@
 package ru.otus.saturn33.movielist.ui
 
-import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.ReactionDTO
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 
 class ListActivity : AppCompatActivity() {
@@ -40,31 +41,7 @@ class ListActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_list)
-
-        for (i in 0..3) {
-            try {
-                val movie = Storage.movies.elementAt(i)
-                val btn = findViewById<Button>(Storage.getButtonId(i))
-                val img = findViewById<ImageView>(Storage.getImageViewId(i))
-                val text = findViewById<TextView>(Storage.getTextId(i))
-                btn.visibility = View.VISIBLE
-                img.visibility = View.VISIBLE
-                text.visibility = View.VISIBLE
-                img.setImageResource(Storage.getImageId(i))
-                text.text = movie.name
-                btn.setOnClickListener {
-                    text.setTextColor(resources.getColor(R.color.colorAccent, theme))
-                    movie.checked = true
-                    startActivityForResult(Intent(this, DetailActivity::class.java).apply {
-                        putExtra("movie", movie)
-                    }, REQUEST_CODE)
-                }
-            } catch (e: IndexOutOfBoundsException) {
-                findViewById<Button>(Storage.getButtonId(i)).visibility = View.GONE
-                findViewById<ImageView>(Storage.getImageViewId(i)).visibility = View.GONE
-                findViewById<TextView>(Storage.getTextId(i)).visibility = View.GONE
-            }
-        }
+        initRecycler()
 
         findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
@@ -78,11 +55,21 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        resumeSelection()
+    private fun initRecycler() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        Log.d(TAG, "Orientation ${resources.configuration.orientation}")
+        val layoutManager = when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(this, 2)
+            else -> LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        }
+        val colorPair = Pair(
+            resources.getColor(R.color.colorAccent, theme),
+            resources.getColor(R.color.colorPrimary, theme)
+        )
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter =
+            MovieListAdapter(LayoutInflater.from(this), Storage.movies, colorPair)
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -99,34 +86,6 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    private fun resumeSelection() {
-        for (i in 0..3) {
-            try {
-                val movie = Storage.movies.elementAt(i)
-                if (movie.checked) {
-                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(
-                        resources.getColor(
-                            R.color.colorAccent,
-                            theme
-                        )
-                    )
-                }
-            } catch (e: IndexOutOfBoundsException) {
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                val reaction = it.getParcelableExtra(REACTION_KEY) ?: ReactionDTO()
-                Log.d(TAG, "Liked: ${reaction.liked}")
-                Log.d(TAG, "Comment: ${reaction.comment}")
-            }
-        }
-    }
-
     override fun onBackPressed() {
         val dialog = ExitDialog(this)
         dialog.setOnCancelListener {
@@ -137,8 +96,6 @@ class ListActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "TST"
-        const val REQUEST_CODE = 0
-        const val REACTION_KEY = "reaction"
         const val THEME_KEY = "theme"
     }
 }

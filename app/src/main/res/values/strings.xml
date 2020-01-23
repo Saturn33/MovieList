@@ -12,4 +12,5 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="theme">Theme</string>
+    <string name="is_favorite">In favorite</string>
 </resources>
