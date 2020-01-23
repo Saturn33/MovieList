@@ -4,23 +4,44 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.ReactionDTO
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 
 class ListActivity : AppCompatActivity() {
+    private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
+
+    private fun setThemeCycle() {
+        themeMode =
+            if (themeMode == AppCompatDelegate.MODE_NIGHT_NO) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(themeMode)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(THEME_KEY, themeMode)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        if (savedInstanceState == null) {
+            AppCompatDelegate.setDefaultNightMode(themeMode)
+        } else {
+            themeMode = savedInstanceState.getInt(THEME_KEY, AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
-        for (i in 0..2) {
+        setContentView(R.layout.activity_list)
+
+        for (i in 0..3) {
             try {
                 val movie = Storage.movies.elementAt(i)
                 val btn = findViewById<Button>(Storage.getButtonId(i))
@@ -45,7 +66,7 @@ class ListActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<ImageButton>(R.id.invite).setOnClickListener {
+        findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
@@ -62,12 +83,33 @@ class ListActivity : AppCompatActivity() {
         resumeSelection()
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_theme -> {
+                setThemeCycle()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun resumeSelection() {
-        for (i in 0..2) {
+        for (i in 0..3) {
             try {
                 val movie = Storage.movies.elementAt(i)
                 if (movie.checked) {
-                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(resources.getColor(R.color.colorAccent, theme))
+                    findViewById<TextView>(Storage.getTextId(i)).setTextColor(
+                        resources.getColor(
+                            R.color.colorAccent,
+                            theme
+                        )
+                    )
                 }
             } catch (e: IndexOutOfBoundsException) {
             }
@@ -85,9 +127,18 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        val dialog = ExitDialog(this)
+        dialog.setOnCancelListener {
+            super.onBackPressed()
+        }
+        dialog.show()
+    }
+
     companion object {
         const val TAG = "TST"
         const val REQUEST_CODE = 0
         const val REACTION_KEY = "reaction"
+        const val THEME_KEY = "theme"
     }
 }

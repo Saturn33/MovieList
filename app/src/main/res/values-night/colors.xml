@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorMenuIcon">#000000</color>
+    <color name="colorIconDark">#ddffdd</color>
+    <color name="colorPrimaryDark">#55a79B</color>
+</resources>

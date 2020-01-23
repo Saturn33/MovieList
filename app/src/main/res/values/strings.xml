@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">MovieList</string>
-    <string name="movie_image">Изображение</string>
-    <string name="button_details">Детали</string>
-    <string name="tools_name">Название</string>
-    <string name="invite_friend">Пригласить друга</string>
-    <string name="try_app">Попробуй новое приложение со списком фильмов!</string>
-    <string name="is_liked">Нравится</string>
-    <string name="comment">Комментарий</string>
+    <string name="movie_image">Picture</string>
+    <string name="button_details">Details</string>
+    <string name="tools_name">Title</string>
+    <string name="invite_friend">Invite friend</string>
+    <string name="try_app">Let\'s try our new app with movie list!</string>
+    <string name="is_liked">Like</string>
+    <string name="comment">Comment</string>
+    <string name="dialog_exit_title">Advanced exit</string>
+    <string name="dialog_exit_text">Are you sure want to exit?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="theme">Theme</string>
 </resources>
