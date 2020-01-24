@@ -10,7 +10,7 @@ import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.ui.DetailActivity
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 
-class MovieListViewHolder(itemView: View, private val adapter: MovieListAdapter) :
+class MovieListItemViewHolder(itemView: View, private val adapter: MovieListAdapter) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
     private val titleTv: TextView = itemView.findViewById(R.id.titleTv)
@@ -30,6 +30,12 @@ class MovieListViewHolder(itemView: View, private val adapter: MovieListAdapter)
                 }
             )
             adapter.notifyItemChanged(adapterPosition)
+        }
+
+        itemView.setOnLongClickListener {
+            adapter.items.removeAt(adapterPosition)
+            adapter.notifyItemRemoved(adapterPosition)
+            true
         }
 
         inFavIv.setOnClickListener {

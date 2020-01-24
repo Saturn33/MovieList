@@ -66,9 +66,23 @@ class ListActivity : AppCompatActivity() {
             resources.getColor(R.color.colorAccent, theme),
             resources.getColor(R.color.colorPrimary, theme)
         )
+        Storage.movies.clear()
+        Storage.movies.addAll(Storage.moviesInitial)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter =
             MovieListAdapter(LayoutInflater.from(this), Storage.movies, colorPair)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == Storage.movies.size) {
+                    Storage.movies.addAll(Storage.additionalMovies)
+                    recyclerView.adapter?.notifyItemRangeInserted(
+                        Storage.movies.size - Storage.additionalMovies.size,
+                        Storage.additionalMovies.size
+                    )
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
