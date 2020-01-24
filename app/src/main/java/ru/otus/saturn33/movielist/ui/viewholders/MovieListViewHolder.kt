@@ -17,7 +17,7 @@ class MovieListViewHolder(itemView: View, private val adapter: MovieListAdapter)
     private val inFavIv: ImageView = itemView.findViewById(R.id.inFavIv)
 
     fun bind(item: MovieDTO, colors: Pair<Int, Int>) {
-        imgIv.setImageResource(item.imageId)
+        imgIv.setImageResource(item.imageId ?: R.drawable.movie_filler)
         titleTv.text = item.name
         titleTv.setTextColor(if (item.checked) colors.first else colors.second)
         inFavIv.setImageResource(if (item.inFav) R.drawable.favorite_yes else R.drawable.favorite_no)

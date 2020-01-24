@@ -18,7 +18,8 @@ class DetailActivity : AppCompatActivity() {
         val movie = intent.getParcelableExtra("movie") ?: MovieDTO("", "", 0)
 
         title = movie.name
-        findViewById<ImageView>(R.id.image_detail).setImageResource(movie.imageId)
+        if (movie.imageId != null)
+            findViewById<ImageView>(R.id.image_detail).setImageResource(movie.imageId)
         findViewById<TextView>(R.id.description).text = movie.description
     }
 
