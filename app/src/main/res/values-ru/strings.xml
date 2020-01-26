@@ -15,4 +15,11 @@
     <string name="is_favorite">В избранном</string>
     <string name="favorites">Избранное</string>
     <string name="title_favorites">Избранное</string>
+    <string name="new_movie">Новый фильм</string>
+    <string name="empty_description">Описание должно быть заполнено</string>
+    <string name="empty_title">Заголовок должен быть заполнен</string>
+    <string name="new_movie_description">Описание</string>
+    <string name="new_movie_title">Заголовок</string>
+    <string name="title_new_movie">Новый фильм</string>
+    <string name="menu_done">Готово</string>
 </resources>

@@ -15,4 +15,11 @@
     <string name="is_favorite">In favorite</string>
     <string name="favorites">Favorites</string>
     <string name="title_favorites">Favorites</string>
+    <string name="new_movie">New movie</string>
+    <string name="new_movie_title">Movie title</string>
+    <string name="new_movie_description">Description</string>
+    <string name="empty_title">You should fill title</string>
+    <string name="empty_description">You should fill description</string>
+    <string name="title_new_movie">New movie</string>
+    <string name="menu_done">Done</string>
 </resources>

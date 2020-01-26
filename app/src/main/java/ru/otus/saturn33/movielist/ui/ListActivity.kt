@@ -1,9 +1,9 @@
 package ru.otus.saturn33.movielist.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ru.otus.saturn33.movielist.R
+import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
@@ -55,6 +56,12 @@ class ListActivity : AppCompatActivity() {
                 startActivity(sendIntent)
             }
         }
+        findViewById<TextView>(R.id.new_movie).setOnClickListener {
+            startActivityForResult(
+                Intent(this, NewMovieActivity::class.java),
+                REQUEST_CODE_NEW_MOVIE
+            )
+        }
     }
 
     private fun initSwipeRefresh() {
@@ -71,7 +78,6 @@ class ListActivity : AppCompatActivity() {
 
     private fun initRecycler() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        Log.d(TAG, "Orientation ${resources.configuration.orientation}")
         val layoutManager = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(this, 2)
             else -> LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -120,6 +126,20 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_NEW_MOVIE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                val movie: MovieDTO? = it.getParcelableExtra(MOVIE_KEY)
+                movie?.let { movieDTO ->
+                    Storage.movies.add(movieDTO)
+                    val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                    recyclerView.adapter?.notifyItemInserted(Storage.movies.size)
+                }
+            }
+        }
+    }
+
     override fun onBackPressed() {
         val dialog = ExitDialog(this)
         dialog.setOnCancelListener {
@@ -131,5 +151,7 @@ class ListActivity : AppCompatActivity() {
     companion object {
         const val TAG = "TST"
         const val THEME_KEY = "theme"
+        const val REQUEST_CODE_NEW_MOVIE = 0
+        const val MOVIE_KEY = "movie"
     }
 }
