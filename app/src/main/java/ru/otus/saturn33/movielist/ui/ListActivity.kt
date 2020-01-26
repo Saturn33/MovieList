@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
@@ -42,6 +43,7 @@ class ListActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_list)
         initRecycler()
+        initSwipeRefresh()
 
         findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
@@ -52,6 +54,18 @@ class ListActivity : AppCompatActivity() {
             sendIntent.resolveActivity(packageManager)?.let {
                 startActivity(sendIntent)
             }
+        }
+    }
+
+    private fun initSwipeRefresh() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val swipeRefresher = findViewById<SwipeRefreshLayout>(R.id.swipeRefresher)
+        swipeRefresher.setOnRefreshListener {
+            recyclerView.adapter?.notifyItemRangeRemoved(0, Storage.movies.size)
+            Storage.movies.clear()
+            Storage.movies.addAll(Storage.moviesInitial)
+            recyclerView.adapter?.notifyItemRangeInserted(0, Storage.movies.size)
+            swipeRefresher.isRefreshing = false
         }
     }
 
