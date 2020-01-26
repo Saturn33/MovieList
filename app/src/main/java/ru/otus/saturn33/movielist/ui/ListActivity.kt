@@ -96,6 +96,12 @@ class ListActivity : AppCompatActivity() {
                 setThemeCycle()
                 true
             }
+            R.id.action_favorites -> {
+                startActivity(
+                    Intent(this, FavoritesActivity::class.java)
+                )
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

@@ -13,4 +13,6 @@
     <string name="dialog_no">No</string>
     <string name="theme">Theme</string>
     <string name="is_favorite">In favorite</string>
+    <string name="favorites">Favorites</string>
+    <string name="title_favorites">Favorites</string>
 </resources>
