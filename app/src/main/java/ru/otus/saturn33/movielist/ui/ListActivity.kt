@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
+import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
 import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 
 class ListActivity : AppCompatActivity() {
@@ -91,6 +93,18 @@ class ListActivity : AppCompatActivity() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter =
             MovieListAdapter(LayoutInflater.from(this), Storage.movies, colorPair)
+
+        getDrawable(R.drawable.custom_line)?.let {
+            recyclerView.addItemDecoration(
+                CustomDecoration(
+                    this,
+                    DividerItemDecoration.VERTICAL,
+                    it,
+                    100,
+                    100
+                )
+            )
+        }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
