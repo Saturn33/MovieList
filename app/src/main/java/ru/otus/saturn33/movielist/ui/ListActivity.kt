@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
+import ru.otus.saturn33.movielist.data.ReactionDTO
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
@@ -92,7 +94,13 @@ class ListActivity : AppCompatActivity() {
         Storage.movies.addAll(Storage.moviesInitial)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter =
-            MovieListAdapter(LayoutInflater.from(this), Storage.movies, colorPair)
+            MovieListAdapter(LayoutInflater.from(this), Storage.movies, colorPair) {
+                this.startActivityForResult(
+                    Intent(this@ListActivity, DetailActivity::class.java).apply {
+                        putExtra(MOVIE_KEY, it)
+                    }, REQUEST_CODE_DETAILS
+                )
+            }
 
         getDrawable(R.drawable.custom_line)?.let {
             recyclerView.addItemDecoration(
@@ -142,13 +150,20 @@ class ListActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_NEW_MOVIE && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                val movie: MovieDTO? = it.getParcelableExtra(MOVIE_KEY)
-                movie?.let { movieDTO ->
-                    Storage.movies.add(movieDTO)
-                    val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-                    recyclerView.adapter?.notifyItemInserted(Storage.movies.size)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CODE_NEW_MOVIE -> data?.let {
+                    val movie: MovieDTO? = it.getParcelableExtra(MOVIE_KEY)
+                    movie?.let { movieDTO ->
+                        Storage.movies.add(movieDTO)
+                        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                        recyclerView.adapter?.notifyItemInserted(Storage.movies.size)
+                    }
+                }
+                REQUEST_CODE_DETAILS -> data?.let {
+                    val reaction = it.getParcelableExtra(REACTION_KEY) ?: ReactionDTO()
+                    Log.d(TAG, "Liked: ${reaction.liked}")
+                    Log.d(TAG, "Comment: ${reaction.comment}")
                 }
             }
         }
@@ -166,6 +181,8 @@ class ListActivity : AppCompatActivity() {
         const val TAG = "TST"
         const val THEME_KEY = "theme"
         const val REQUEST_CODE_NEW_MOVIE = 0
+        const val REQUEST_CODE_DETAILS = 1
         const val MOVIE_KEY = "movie"
+        const val REACTION_KEY = "reaction"
     }
 }

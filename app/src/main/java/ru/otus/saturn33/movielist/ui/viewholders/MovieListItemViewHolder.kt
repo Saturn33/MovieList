@@ -1,16 +1,18 @@
 package ru.otus.saturn33.movielist.ui.viewholders
 
-import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.DetailActivity
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 
-class MovieListItemViewHolder(itemView: View, private val adapter: MovieListAdapter) :
+class MovieListItemViewHolder(
+    itemView: View,
+    private val adapter: MovieListAdapter,
+    private val tapListener: (MovieDTO) -> Unit
+) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
     private val titleTv: TextView = itemView.findViewById(R.id.titleTv)
@@ -24,12 +26,8 @@ class MovieListItemViewHolder(itemView: View, private val adapter: MovieListAdap
 
         itemView.setOnClickListener {
             item.checked = true
-            itemView.context.startActivity(
-                Intent(itemView.context, DetailActivity::class.java).apply {
-                    putExtra("movie", item)
-                }
-            )
             adapter.notifyItemChanged(adapterPosition)
+            tapListener(item)
         }
 
         itemView.setOnLongClickListener {

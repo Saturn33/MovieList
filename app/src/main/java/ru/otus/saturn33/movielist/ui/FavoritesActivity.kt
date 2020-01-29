@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.ui
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.ListActivity.Companion.MOVIE_KEY
 import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
 
 class FavoritesActivity : AppCompatActivity() {
@@ -38,7 +40,13 @@ class FavoritesActivity : AppCompatActivity() {
             FavoritesListAdapter(
                 LayoutInflater.from(this),
                 Storage.movies.filter { it.inFav } as MutableList<MovieDTO>,
-                colorPair)
+                colorPair) {
+                this.startActivity(
+                    Intent(this@FavoritesActivity, DetailActivity::class.java).apply {
+                        putExtra(MOVIE_KEY, it)
+                    }
+                )
+            }
     }
 
 

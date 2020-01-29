@@ -11,11 +11,12 @@ import ru.otus.saturn33.movielist.ui.viewholders.MovieListItemViewHolder
 class MovieListAdapter(
     private val inflater: LayoutInflater,
     val items: MutableList<MovieDTO>,
-    private val colors: Pair<Int, Int>
+    private val colors: Pair<Int, Int>,
+    val tapListener: (MovieDTO) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_ITEM -> MovieListItemViewHolder(inflater.inflate(R.layout.item_movie_list, parent, false), this)
+            VIEW_TYPE_ITEM -> MovieListItemViewHolder(inflater.inflate(R.layout.item_movie_list, parent, false), this, tapListener)
             VIEW_TYPE_FOOTER -> MovieListFooterViewHolder(inflater.inflate(R.layout.footer_movie_list, parent, false))
             else -> throw Exception("Bad viewtype")
         }
