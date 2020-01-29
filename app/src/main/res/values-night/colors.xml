@@ -3,4 +3,5 @@
     <color name="colorMenuIcon">#000000</color>
     <color name="colorIconDark">#ddffdd</color>
     <color name="colorPrimaryDark">#55a79B</color>
+    <color name="mainItemBackground">#444444</color>
 </resources>

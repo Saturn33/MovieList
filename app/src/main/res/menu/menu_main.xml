@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_favorites"
+        android:orderInCategory="100"
+        android:icon="@drawable/favorites"
+        android:title="@string/favorites"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_theme"
         android:orderInCategory="100"
         android:icon="@drawable/day_night"
         android:title="@string/theme"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

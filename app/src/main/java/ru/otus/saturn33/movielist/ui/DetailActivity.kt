@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.ReactionDTO
-import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.ListActivity.Companion.MOVIE_KEY
 import ru.otus.saturn33.movielist.ui.ListActivity.Companion.REACTION_KEY
 
 class DetailActivity : AppCompatActivity() {
@@ -25,10 +25,11 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val movie = intent.getParcelableExtra<MovieDTO>("movie") ?: MovieDTO("", "", 0)
+        val movie = intent.getParcelableExtra(MOVIE_KEY) ?: MovieDTO("", "", 0)
 
         title = movie.name
-        findViewById<ImageView>(R.id.image_detail).setImageResource(Storage.getImageId(movie.imageId))
+        if (movie.imageId != null)
+            findViewById<ImageView>(R.id.image_detail).setImageResource(movie.imageId)
         findViewById<TextView>(R.id.description).text = movie.description
 
         setResult(Activity.RESULT_OK, Intent().apply {
