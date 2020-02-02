@@ -48,14 +48,11 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
         val toolbar: Toolbar? = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportFragmentManager.addOnBackStackChangedListener {
-            supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 1)
-        }
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        openList()
+        openList(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,13 +118,14 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
             .commit()
     }
 
-    private fun openList() {
-        supportFragmentManager
+    private fun openList(addToBackStack: Boolean = true) {
+        val ft = supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .addToBackStack(FRAGMENT_LIST)
-            .commit()
+        if (addToBackStack)
+            ft.addToBackStack(FRAGMENT_LIST)
+        ft.commit()
     }
 
     private fun openNewMovie() {
@@ -154,8 +152,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             R.id.nav_list -> openList()
             R.id.nav_favorite -> openFavorites()
         }

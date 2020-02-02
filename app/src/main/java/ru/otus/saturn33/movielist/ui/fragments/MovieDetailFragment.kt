@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
@@ -29,9 +30,18 @@ class MovieDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO("", "", 0)
 
-        activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)?.title = movie.name
-        if (movie.imageId != null)
-            view.findViewById<ImageView>(R.id.image_detail).setImageResource(movie.imageId)
+        activity?.findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
+        activity?.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
+
+        val img: ImageView? = activity?.findViewById(R.id.image)
+        if (movie.imageId != null) {
+            img?.setImageResource(movie.imageId)
+            img?.visibility = View.VISIBLE
+        } else {
+            img?.setImageResource(R.drawable.movie_filler)
+            img?.visibility = View.INVISIBLE
+        }
+
         view.findViewById<TextView>(R.id.description).text = movie.description
     }
 

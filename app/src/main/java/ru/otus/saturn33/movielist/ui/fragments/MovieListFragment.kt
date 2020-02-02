@@ -43,7 +43,10 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.movie_list)
+        activity?.findViewById<Toolbar>(R.id.toolbar)?.let {
+            it.title = getString(R.string.movie_list)
+            it.visibility = View.VISIBLE
+        }
 
         initRecycler(view)
         initSwipeRefresh(view)
