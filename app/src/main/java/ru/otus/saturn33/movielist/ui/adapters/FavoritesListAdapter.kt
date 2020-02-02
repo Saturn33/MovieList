@@ -11,7 +11,7 @@ class FavoritesListAdapter(
     private val inflater: LayoutInflater,
     val items: MutableList<MovieDTO>,
     private val colors: Pair<Int, Int>,
-    val tapListener: (MovieDTO) -> Unit
+    private val tapListener: ((MovieDTO) -> Unit)?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

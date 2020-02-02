@@ -9,7 +9,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.ListActivity.Companion.MOVIE_KEY
+import ru.otus.saturn33.movielist.ui.MainActivity.Companion.MOVIE_KEY
 
 class NewMovieActivity : AppCompatActivity() {
 

@@ -22,4 +22,5 @@
     <string name="new_movie_title">Заголовок</string>
     <string name="title_new_movie">Новый фильм</string>
     <string name="menu_done">Готово</string>
+    <string name="movie_list">Список фильмов</string>
 </resources>

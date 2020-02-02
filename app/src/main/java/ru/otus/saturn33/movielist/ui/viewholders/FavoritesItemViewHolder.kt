@@ -11,7 +11,7 @@ import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
 class FavoritesItemViewHolder(
     itemView: View,
     private val adapter: FavoritesListAdapter,
-    private val tapListener: (MovieDTO) -> Unit
+    private val tapListener: ((MovieDTO) -> Unit)?
 ) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
@@ -25,7 +25,7 @@ class FavoritesItemViewHolder(
         itemView.setOnClickListener {
             item.checked = true
             adapter.notifyItemChanged(adapterPosition)
-            tapListener(item)
+            tapListener?.invoke(item)
         }
 
         itemView.setOnLongClickListener {

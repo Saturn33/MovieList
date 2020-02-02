@@ -22,4 +22,5 @@
     <string name="empty_description">You should fill description</string>
     <string name="title_new_movie">New movie</string>
     <string name="menu_done">Done</string>
+    <string name="movie_list">Movie list</string>
 </resources>
