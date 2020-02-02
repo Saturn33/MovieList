@@ -6,8 +6,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
@@ -17,7 +21,8 @@ import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
-    MovieFavoritesFragment.OnDetailedClickListener {
+    MovieFavoritesFragment.OnDetailedClickListener,
+    NavigationView.OnNavigationItemSelectedListener {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
 
     private fun setThemeCycle() {
@@ -41,26 +46,22 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
         setContentView(R.layout.activity_main)
 
+        val toolbar: Toolbar? = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
         supportFragmentManager.addOnBackStackChangedListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 1)
         }
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .addToBackStack(FRAGMENT_LIST)
-            .commit()
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        openList()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_theme -> {
                 setThemeCycle()
-                true
-            }
-            R.id.action_favorites -> {
-                openFavorites()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -120,6 +121,15 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
             .commit()
     }
 
+    private fun openList() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .addToBackStack(FRAGMENT_LIST)
+            .commit()
+    }
+
     private fun openNewMovie() {
         startActivityForResult(
             Intent(this, NewMovieActivity::class.java),
@@ -141,5 +151,17 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
                 }
             }
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        when (id) {
+            R.id.nav_list -> openList()
+            R.id.nav_favorite -> openFavorites()
+        }
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        drawer.closeDrawer(GravityCompat.START)
+
+        return true
     }
 }

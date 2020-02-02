@@ -10,10 +10,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.data.ReactionDTO
 
 class MovieDetailFragment : Fragment() {
-    val reaction = ReactionDTO()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,16 +25,11 @@ class MovieDetailFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.menu_new, menu)
-//    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO("", "", 0)
 
-        activity?.title = movie.name
-
+        activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)?.title = movie.name
         if (movie.imageId != null)
             view.findViewById<ImageView>(R.id.image_detail).setImageResource(movie.imageId)
         view.findViewById<TextView>(R.id.description).text = movie.description
