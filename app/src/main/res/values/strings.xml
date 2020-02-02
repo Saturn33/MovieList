@@ -23,4 +23,7 @@
     <string name="title_new_movie">New movie</string>
     <string name="menu_done">Done</string>
     <string name="movie_list">Movie list</string>
+    <string name="cancel">Cancel</string>
+    <string name="favorites_added">Added to favorites</string>
+    <string name="favorites_removed">Removed from favorites</string>
 </resources>

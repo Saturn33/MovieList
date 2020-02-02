@@ -23,4 +23,7 @@
     <string name="title_new_movie">Новый фильм</string>
     <string name="menu_done">Готово</string>
     <string name="movie_list">Список фильмов</string>
+    <string name="favorites_added">Добавлено в избранное</string>
+    <string name="favorites_removed">Удалено из избранного</string>
+    <string name="cancel">Отменить</string>
 </resources>

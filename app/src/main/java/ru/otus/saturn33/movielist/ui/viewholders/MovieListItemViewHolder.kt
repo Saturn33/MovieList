@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
@@ -37,8 +38,17 @@ class MovieListItemViewHolder(
         }
 
         inFavIv.setOnClickListener {
+            val pos = adapterPosition
             item.inFav = !item.inFav
-            adapter.notifyItemChanged(adapterPosition)
+            adapter.notifyItemChanged(pos)
+            Snackbar.make(
+                itemView,
+                itemView.context.getString(if (item.inFav) R.string.favorites_added else R.string.favorites_removed),
+                Snackbar.LENGTH_LONG
+            ).setAction(itemView.context.getString(R.string.cancel)) {
+                item.inFav = !item.inFav
+                adapter.notifyItemChanged(pos)
+            }.show()
         }
     }
 }
