@@ -1,7 +1,5 @@
 package ru.otus.saturn33.movielist.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -15,15 +13,19 @@ import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 import ru.otus.saturn33.movielist.ui.fragments.MovieDetailFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
+import ru.otus.saturn33.movielist.ui.fragments.NewMovieFragment
 
-class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
+class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener, MovieListFragment.AdapterProvider,
     MovieFavoritesFragment.OnDetailedClickListener,
-    NavigationView.OnNavigationItemSelectedListener {
+    NavigationView.OnNavigationItemSelectedListener,
+    NewMovieFragment.OnNewMovieClickListener {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
+    private var movieListAdapter: MovieListAdapter? = null
 
     private fun setThemeCycle() {
         themeMode =
@@ -49,9 +51,15 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         val toolbar: Toolbar? = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
+        }
+
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
+        Storage.movies.clear()
+        Storage.movies.addAll(Storage.moviesInitial)
         openList(false)
     }
 
@@ -83,9 +91,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         const val FRAGMENT_LIST = "FragmentList"
         const val FRAGMENT_DETAILS = "FragmentDetails"
         const val FRAGMENT_FAVORITE = "FragmentFavorite"
-
-        const val REQUEST_CODE_NEW_MOVIE = 0
-        const val MOVIE_KEY = "movie"
+        const val FRAGMENT_NEW = "FragmentNew"
     }
 
     override fun onDetailedClick(item: MovieDTO) {
@@ -129,36 +135,32 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     }
 
     private fun openNewMovie() {
-        startActivityForResult(
-            Intent(this, NewMovieActivity::class.java),
-            REQUEST_CODE_NEW_MOVIE
-        )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_NEW_MOVIE -> data?.let {
-                    val movie: MovieDTO? = it.getParcelableExtra(MOVIE_KEY)
-                    movie?.let { movieDTO ->
-                        Storage.movies.add(movieDTO)
-                        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-                        recyclerView.adapter?.notifyItemInserted(Storage.movies.size)
-                    }
-                }
-            }
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, NewMovieFragment(), NewMovieFragment.TAG)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .addToBackStack(FRAGMENT_NEW)
+            .commit()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_list -> openList()
             R.id.nav_favorite -> openFavorites()
+            R.id.nav_new -> openNewMovie()
         }
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    override fun onNewMovieClick(item: MovieDTO) {
+        Storage.movies.add(item)
+        movieListAdapter?.notifyItemInserted(Storage.movies.size)
+    }
+
+    override fun onAdapterCreated(adapter: MovieListAdapter) {
+        movieListAdapter = adapter
     }
 }

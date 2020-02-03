@@ -23,6 +23,7 @@ import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
 class MovieListFragment : Fragment() {
 
     private var listener: OnClickListener? = null
+    private var adapterProvider: AdapterProvider? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,13 +89,12 @@ class MovieListFragment : Fragment() {
             resources.getColor(R.color.colorAccent, activity?.theme),
             resources.getColor(R.color.colorPrimary, activity?.theme)
         )
-        Storage.movies.clear()
-        Storage.movies.addAll(Storage.moviesInitial)
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter =
-            MovieListAdapter(LayoutInflater.from(context), Storage.movies, colorPair) {
-                listener?.onDetailedClick(it)
-            }
+        val newAdapter = MovieListAdapter(LayoutInflater.from(context), Storage.movies, colorPair) {
+            listener?.onDetailedClick(it)
+        }
+        recyclerView.adapter = newAdapter
+        adapterProvider?.onAdapterCreated(newAdapter)
 
         getDrawable(context!!, R.drawable.custom_line)?.let {
             recyclerView.addItemDecoration(
@@ -127,6 +127,9 @@ class MovieListFragment : Fragment() {
         if (activity is OnClickListener) {
             listener = activity as OnClickListener
         }
+        if (activity is AdapterProvider) {
+            adapterProvider = activity as AdapterProvider
+        }
     }
 
     companion object {
@@ -136,5 +139,9 @@ class MovieListFragment : Fragment() {
     interface OnClickListener {
         fun onDetailedClick(item: MovieDTO)
         fun onNewClick()
+    }
+
+    interface AdapterProvider {
+        fun onAdapterCreated(adapter: MovieListAdapter)
     }
 }
