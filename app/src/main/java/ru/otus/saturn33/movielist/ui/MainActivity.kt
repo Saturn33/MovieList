@@ -2,13 +2,13 @@ package ru.otus.saturn33.movielist.ui
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
@@ -20,7 +20,8 @@ import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
 import ru.otus.saturn33.movielist.ui.fragments.NewMovieFragment
 
-class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener, MovieListFragment.AdapterProvider,
+class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
+    MovieListFragment.AdapterProvider,
     MovieFavoritesFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
     NewMovieFragment.OnNewMovieClickListener {
@@ -48,10 +49,31 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener, Mov
 
         setContentView(R.layout.activity_main)
 
-        val toolbar: Toolbar? = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        val activityToolbar: Toolbar? = findViewById(R.id.toolbar)
+        setSupportActionBar(activityToolbar)
 
         supportFragmentManager.addOnBackStackChangedListener {
+            supportFragmentManager.fragments.last {
+                when (it.tag) {
+                    MovieDetailFragment.TAG -> {
+                        activityToolbar?.visibility = View.GONE
+                        val fragmentToolbar = it.view?.findViewById<Toolbar>(R.id.toolbarAdvanced)
+                        setSupportActionBar(fragmentToolbar)
+                    }
+                    else -> {
+                        activityToolbar?.visibility = View.VISIBLE
+                        setSupportActionBar(activityToolbar)
+                    }
+                }
+                when (it.tag) {
+                    MovieListFragment.TAG -> activityToolbar?.title = getString(R.string.movie_list)
+                    NewMovieFragment.TAG -> activityToolbar?.title =
+                        getString(R.string.title_new_movie)
+                    MovieFavoritesFragment.TAG -> activityToolbar?.title =
+                        getString(R.string.title_favorites)
+                }
+                true
+            }
             supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
         }
 

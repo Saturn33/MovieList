@@ -35,11 +35,6 @@ class MovieFavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.let {
-            it.title = getString(R.string.title_favorites)
-            it.visibility = View.VISIBLE
-        }
-
         initRecycler(view)
     }
 
@@ -82,7 +77,7 @@ class MovieFavoritesFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "MovieDetail"
+        const val TAG = "MovieFavorites"
     }
 
     interface OnDetailedClickListener {

@@ -28,14 +28,6 @@ class NewMovieFragment : Fragment() {
         inflater.inflate(R.menu.menu_new, menu)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.let {
-            it.title = getString(R.string.title_new_movie)
-            it.visibility = View.VISIBLE
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

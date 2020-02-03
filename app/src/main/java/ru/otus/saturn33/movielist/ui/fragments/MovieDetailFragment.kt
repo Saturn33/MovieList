@@ -30,8 +30,7 @@ class MovieDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO("", "", 0)
 
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.visibility = View.GONE
-        activity?.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
+        view.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
 
         val img: ImageView? = activity?.findViewById(R.id.image)
         if (movie.imageId != null) {
