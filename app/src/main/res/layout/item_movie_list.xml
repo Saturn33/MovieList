@@ -36,6 +36,7 @@
         android:layout_margin="@dimen/margin_mid"
         android:contentDescription="@string/is_favorite"
         android:src="@drawable/favorite_no"
+        android:stateListAnimator="@animator/like_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
