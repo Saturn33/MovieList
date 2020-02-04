@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import ru.otus.saturn33.movielist.R
 
-class ExitDialog(context: Context) : Dialog(context) {
+class ExitDialog(context: Context, private val listener: ((Boolean) -> Unit)?) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,11 +16,13 @@ class ExitDialog(context: Context) : Dialog(context) {
         val buttonNo = findViewById<Button>(R.id.no_button)
 
         buttonYes.setOnClickListener {
-            cancel()
+            dismiss()
+            listener?.invoke(true)
         }
 
         buttonNo.setOnClickListener {
             dismiss()
+            listener?.invoke(false)
         }
     }
 }

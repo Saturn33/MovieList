@@ -53,6 +53,20 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         setSupportActionBar(activityToolbar)
 
         supportFragmentManager.addOnBackStackChangedListener {
+            updateToolBar(activityToolbar)
+        }
+
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        Storage.movies.clear()
+        Storage.movies.addAll(Storage.moviesInitial)
+        openList(false)
+        updateToolBar(activityToolbar)
+    }
+
+    private fun updateToolBar(activityToolbar: Toolbar?) {
+        if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.fragments.last {
                 when (it.tag) {
                     MovieDetailFragment.TAG -> {
@@ -74,19 +88,20 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
                 }
                 true
             }
-            supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
+        } else {
+            activityToolbar?.visibility = View.VISIBLE
+            setSupportActionBar(activityToolbar)
+            activityToolbar?.title = getString(R.string.movie_list)
         }
-
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(this)
-
-        Storage.movies.clear()
-        Storage.movies.addAll(Storage.moviesInitial)
-        openList(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                supportFragmentManager.popBackStack()
+                true
+            }
             R.id.action_theme -> {
                 setThemeCycle()
                 true
@@ -99,9 +114,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {
-            val dialog = ExitDialog(this)
-            dialog.setOnCancelListener {
-                super.onBackPressed()
+            val dialog = ExitDialog(this) {
+                if (it) super.onBackPressed()
             }
             dialog.show()
         }
