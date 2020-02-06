@@ -35,6 +35,7 @@ class MovieFavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.title_favorites)
         initRecycler(view)
     }
 
@@ -56,16 +57,6 @@ class MovieFavoritesFragment : Fragment() {
                 colorPair) {
                 listener?.onDetailedClick(it)
             }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                fragmentManager?.popBackStack()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

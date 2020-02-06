@@ -3,6 +3,7 @@ package ru.otus.saturn33.movielist.ui
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
         setContentView(R.layout.activity_main)
 
-        val activityToolbar: Toolbar? = findViewById(R.id.toolbar)
+        val activityToolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(activityToolbar)
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -61,39 +62,63 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
         Storage.movies.clear()
         Storage.movies.addAll(Storage.moviesInitial)
-        openList(false)
+        openList()
         updateToolBar(activityToolbar)
+        initDrawer(findViewById(R.id.toolbar))
     }
 
-    private fun updateToolBar(activityToolbar: Toolbar?) {
+    private fun initDrawer(toolbar: Toolbar) {
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        toggle.isDrawerIndicatorEnabled = true
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun hideDrawer(toolbar: Toolbar?) {
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        ).apply {
+            setToolbarNavigationClickListener {
+                supportFragmentManager.popBackStack()
+            }
+        }
+        toggle.isDrawerIndicatorEnabled = false
+        drawer.removeDrawerListener(toggle)
+//        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun updateToolBar(activityToolbar: Toolbar) {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.fragments.last {
                 when (it.tag) {
                     MovieDetailFragment.TAG -> {
-                        activityToolbar?.visibility = View.GONE
+                        activityToolbar.visibility = View.GONE
                         val fragmentToolbar = it.view?.findViewById<Toolbar>(R.id.toolbarAdvanced)
                         setSupportActionBar(fragmentToolbar)
+                        hideDrawer(fragmentToolbar)
                     }
                     else -> {
-                        activityToolbar?.visibility = View.VISIBLE
+                        activityToolbar.visibility = View.VISIBLE
                         setSupportActionBar(activityToolbar)
+                        hideDrawer(activityToolbar)
                     }
-                }
-                when (it.tag) {
-                    MovieListFragment.TAG -> activityToolbar?.title = getString(R.string.movie_list)
-                    NewMovieFragment.TAG -> activityToolbar?.title =
-                        getString(R.string.title_new_movie)
-                    MovieFavoritesFragment.TAG -> activityToolbar?.title =
-                        getString(R.string.title_favorites)
                 }
                 true
             }
         } else {
-            activityToolbar?.visibility = View.VISIBLE
+            activityToolbar.visibility = View.VISIBLE
             setSupportActionBar(activityToolbar)
-            activityToolbar?.title = getString(R.string.movie_list)
+            activityToolbar.title = getString(R.string.movie_list)
+            initDrawer(activityToolbar)
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -124,9 +149,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
     companion object {
         const val THEME_KEY = "theme"
-        const val FRAGMENT_LIST = "FragmentList"
         const val FRAGMENT_DETAILS = "FragmentDetails"
-        const val FRAGMENT_FAVORITE = "FragmentFavorite"
         const val FRAGMENT_NEW = "FragmentNew"
     }
 
@@ -156,17 +179,14 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieFavoritesFragment(), MovieFavoritesFragment.TAG)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .addToBackStack(FRAGMENT_FAVORITE)
             .commit()
     }
 
-    private fun openList(addToBackStack: Boolean = true) {
+    private fun openList() {
         val ft = supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        if (addToBackStack)
-            ft.addToBackStack(FRAGMENT_LIST)
         ft.commit()
     }
 

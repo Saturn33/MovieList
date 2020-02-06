@@ -24,16 +24,17 @@ class NewMovieFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_movie_new, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.title_new_movie)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_new, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                fragmentManager?.popBackStack()
-                true
-            }
             R.id.action_new_done -> {
                 val validationResult = validateInput()
                 if (validationResult.first) {
