@@ -69,45 +69,43 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
     private fun initDrawer(toolbar: Toolbar) {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val toggle = ActionBarDrawerToggle(
+        ActionBarDrawerToggle(
             this, drawer, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        toggle.isDrawerIndicatorEnabled = true
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
+        ).apply {
+            isDrawerIndicatorEnabled = true
+            syncState()
+        }
     }
 
-    private fun hideDrawer(toolbar: Toolbar?) {
+    private fun disableDrawer(toolbar: Toolbar?) {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val toggle = ActionBarDrawerToggle(
+        ActionBarDrawerToggle(
             this, drawer, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ).apply {
             setToolbarNavigationClickListener {
                 supportFragmentManager.popBackStack()
             }
+            isDrawerIndicatorEnabled = false
+            syncState()
         }
-        toggle.isDrawerIndicatorEnabled = false
-        drawer.removeDrawerListener(toggle)
-//        drawer.addDrawerListener(toggle)
-        toggle.syncState()
     }
 
     private fun updateToolBar(activityToolbar: Toolbar) {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.fragments.last {
                 when (it.tag) {
-                    MovieDetailFragment.TAG -> {
+                    MovieDetailFragment.TAG, NewMovieFragment.TAG -> {
                         activityToolbar.visibility = View.GONE
                         val fragmentToolbar = it.view?.findViewById<Toolbar>(R.id.toolbarAdvanced)
                         setSupportActionBar(fragmentToolbar)
-                        hideDrawer(fragmentToolbar)
+                        disableDrawer(fragmentToolbar)
                     }
                     else -> {
                         activityToolbar.visibility = View.VISIBLE
                         setSupportActionBar(activityToolbar)
-                        hideDrawer(activityToolbar)
+                        disableDrawer(activityToolbar)
                     }
                 }
                 true
@@ -115,7 +113,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         } else {
             activityToolbar.visibility = View.VISIBLE
             setSupportActionBar(activityToolbar)
-            activityToolbar.title = getString(R.string.movie_list)
             initDrawer(activityToolbar)
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

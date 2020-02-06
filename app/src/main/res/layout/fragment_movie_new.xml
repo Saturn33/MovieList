@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.NewMovieFragment">
 
+    <androidx.appcompat.widget.Toolbar
+
+        android:id="@+id/toolbarAdvanced"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:title="Title" />
+
     <EditText
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -16,7 +29,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarAdvanced" />
 
     <EditText
         android:id="@+id/description"

@@ -26,7 +26,7 @@ class NewMovieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.title_new_movie)
+        view.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = getString(R.string.title_new_movie)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
