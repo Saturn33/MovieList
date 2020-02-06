@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
+import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
 
 class FavoritesItemViewHolder(
@@ -31,6 +32,7 @@ class FavoritesItemViewHolder(
         itemView.setOnLongClickListener {
             adapter.items.removeAt(adapterPosition)
             adapter.notifyItemRemoved(adapterPosition)
+            Storage.movies.filter { it == item }.forEach { it.inFav = false }
             true
         }
     }
