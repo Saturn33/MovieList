@@ -10,9 +10,12 @@ import ru.otus.saturn33.movielist.ui.viewholders.FavoritesItemViewHolder
 class FavoritesListAdapter(
     private val inflater: LayoutInflater,
     val items: MutableList<MovieDTO>,
-    private val colors: Pair<Int, Int>,
-    val tapListener: (MovieDTO) -> Unit
+    private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    var tapListener: ((MovieDTO, Int) -> Unit)? = null
+    var longListener: ((MovieDTO, Int) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_ITEM -> FavoritesItemViewHolder(
@@ -20,7 +23,7 @@ class FavoritesListAdapter(
                     R.layout.item_favorites,
                     parent,
                     false
-                ), this, tapListener
+                ), tapListener, longListener
             )
             else -> throw Exception("Bad viewtype")
         }
