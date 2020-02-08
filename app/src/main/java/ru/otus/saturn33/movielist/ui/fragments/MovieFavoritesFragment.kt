@@ -3,14 +3,13 @@ package ru.otus.saturn33.movielist.ui.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
@@ -59,8 +58,25 @@ class MovieFavoritesFragment : Fragment() {
             FavoritesListAdapter(
                 LayoutInflater.from(context),
                 Storage.movies.filter { it.inFav } as MutableList<MovieDTO>,
-                colorPair) {
-                listener?.onDetailedClick(it)
+                colorPair).apply {
+                tapListener = { item, position ->
+                    item.checked = true
+                    this.notifyItemChanged(position)
+                    listener?.onDetailedClick(item)
+                }
+                longListener = { item, position ->
+                    this.items.removeAt(position)
+                    this.notifyItemRemoved(position)
+                    Storage.movies.filter { it == item }.forEach { it.inFav = false }
+                    Snackbar.make(
+                        recyclerView,
+                        if (item.inFav) R.string.favorites_added else R.string.favorites_removed,
+                        Snackbar.LENGTH_LONG
+                    ).setAction(context?.getString(R.string.cancel)) {
+                        item.inFav = !item.inFav
+                        this.notifyItemInserted(this.items.size - 1)
+                    }.show()
+                }
             }
     }
 

@@ -4,15 +4,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 
 class MovieListItemViewHolder(
     itemView: View,
-    private val adapter: MovieListAdapter,
-    private val tapListener: ((MovieDTO) -> Unit)?
+    private val tapListener: ((MovieDTO, position: Int) -> Unit)?,
+    private val favListener: ((MovieDTO, position: Int) -> Unit)?,
+    private val longListener: ((MovieDTO, position: Int) -> Unit)?
 ) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
@@ -26,29 +25,17 @@ class MovieListItemViewHolder(
         inFavIv.setImageResource(if (item.inFav) R.drawable.favorite_yes else R.drawable.favorite_no)
 
         itemView.setOnClickListener {
-            item.checked = true
-            adapter.notifyItemChanged(adapterPosition)
-            tapListener?.invoke(item)
+            tapListener?.invoke(item, adapterPosition)
         }
 
         itemView.setOnLongClickListener {
-            adapter.items.removeAt(adapterPosition)
-            adapter.notifyItemRemoved(adapterPosition)
+            longListener?.invoke(item, adapterPosition)
             true
         }
 
         inFavIv.setOnClickListener {
             val pos = adapterPosition
-            item.inFav = !item.inFav
-            adapter.notifyItemChanged(pos)
-            Snackbar.make(
-                itemView,
-                itemView.context.getString(if (item.inFav) R.string.favorites_added else R.string.favorites_removed),
-                Snackbar.LENGTH_LONG
-            ).setAction(itemView.context.getString(R.string.cancel)) {
-                item.inFav = !item.inFav
-                adapter.notifyItemChanged(pos)
-            }.show()
+            favListener?.invoke(item, pos)
         }
     }
 }

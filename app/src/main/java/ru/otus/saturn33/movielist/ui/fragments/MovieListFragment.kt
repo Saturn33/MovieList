@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
@@ -92,9 +92,31 @@ class MovieListFragment : Fragment() {
             resources.getColor(R.color.colorPrimary, activity?.theme)
         )
         recyclerView.layoutManager = layoutManager
-        val newAdapter = MovieListAdapter(LayoutInflater.from(context), Storage.movies, colorPair) {
-            listener?.onDetailedClick(it)
-        }
+        val newAdapter =
+            MovieListAdapter(LayoutInflater.from(context), Storage.movies, colorPair).apply {
+                tapListener = { item, position ->
+                    item.checked = true
+                    this.notifyItemChanged(position)
+                    listener?.onDetailedClick(item)
+                }
+                favListener = { item, position ->
+                    item.inFav = !item.inFav
+                    notifyItemChanged(position)
+                    Snackbar.make(
+                        recyclerView,
+                        if (item.inFav) R.string.favorites_added else R.string.favorites_removed,
+                        Snackbar.LENGTH_LONG
+                    ).setAction(context?.getString(R.string.cancel)) {
+                        item.inFav = !item.inFav
+                        this.notifyItemChanged(position)
+                    }.show()
+                }
+                longListener = { item, position ->
+                    this.items.removeAt(position)
+                    this.notifyItemRemoved(position)
+                }
+            }
+
         recyclerView.adapter = newAdapter
         adapterProvider?.onAdapterCreated(newAdapter)
 

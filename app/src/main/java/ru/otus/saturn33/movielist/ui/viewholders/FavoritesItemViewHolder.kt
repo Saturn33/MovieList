@@ -6,13 +6,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.data.Storage
-import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
 
 class FavoritesItemViewHolder(
     itemView: View,
-    private val adapter: FavoritesListAdapter,
-    private val tapListener: ((MovieDTO) -> Unit)?
+    private val tapListener: ((MovieDTO, Int) -> Unit)?,
+    private val longListener: ((MovieDTO, Int) -> Unit)?
 ) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
@@ -24,15 +22,11 @@ class FavoritesItemViewHolder(
         titleTv.setTextColor(if (item.checked) colors.first else colors.second)
 
         itemView.setOnClickListener {
-            item.checked = true
-            adapter.notifyItemChanged(adapterPosition)
-            tapListener?.invoke(item)
+            tapListener?.invoke(item, adapterPosition)
         }
 
         itemView.setOnLongClickListener {
-            adapter.items.removeAt(adapterPosition)
-            adapter.notifyItemRemoved(adapterPosition)
-            Storage.movies.filter { it == item }.forEach { it.inFav = false }
+            longListener?.invoke(item, adapterPosition)
             true
         }
     }
