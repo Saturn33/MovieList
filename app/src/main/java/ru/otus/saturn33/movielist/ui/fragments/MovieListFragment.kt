@@ -19,11 +19,13 @@ import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
+import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MovieListFragment : Fragment() {
 
     private var listener: OnClickListener? = null
     private var adapterProvider: AdapterProvider? = null
+    private var actionBarProvider: ActionBarProvider? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +38,9 @@ class MovieListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        if (activity is ActionBarProvider) {
+            actionBarProvider = activity as ActionBarProvider
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -44,7 +49,7 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.movie_list)
+        actionBarProvider?.changeTitle(getString(R.string.movie_list))
 
         initRecycler(view)
         initSwipeRefresh(view)

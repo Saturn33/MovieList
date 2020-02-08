@@ -20,12 +20,13 @@ import ru.otus.saturn33.movielist.ui.fragments.MovieDetailFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
 import ru.otus.saturn33.movielist.ui.fragments.NewMovieFragment
+import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     MovieListFragment.AdapterProvider,
     MovieFavoritesFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
-    NewMovieFragment.OnNewMovieClickListener {
+    NewMovieFragment.OnNewMovieClickListener, ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
     private var movieListAdapter: MovieListAdapter? = null
 
@@ -215,5 +216,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
     override fun onAdapterCreated(adapter: MovieListAdapter) {
         movieListAdapter = adapter
+    }
+
+    override fun changeTitle(title: String) {
+        supportActionBar?.title = title
     }
 }

@@ -32,7 +32,7 @@ class MovieDetailFragment : Fragment() {
 
         view.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
 
-        val img: ImageView? = activity?.findViewById(R.id.image)
+        val img: ImageView? = view.findViewById(R.id.image)
         if (movie.imageId != null) {
             img?.setImageResource(movie.imageId)
             img?.visibility = View.VISIBLE

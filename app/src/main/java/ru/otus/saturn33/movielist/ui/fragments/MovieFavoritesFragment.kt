@@ -15,14 +15,19 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
+import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MovieFavoritesFragment : Fragment() {
 
     private var listener: OnDetailedClickListener? = null
+    private var actionBarProvider: ActionBarProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        if (activity is ActionBarProvider) {
+            actionBarProvider = activity as ActionBarProvider
+        }
     }
 
     override fun onCreateView(
@@ -35,7 +40,7 @@ class MovieFavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<Toolbar>(R.id.toolbar)?.title = getString(R.string.title_favorites)
+        actionBarProvider?.changeTitle(getString(R.string.title_favorites))
         initRecycler(view)
     }
 
