@@ -57,24 +57,25 @@ class MovieFavoritesFragment : Fragment() {
         recyclerView.adapter =
             FavoritesListAdapter(
                 LayoutInflater.from(context),
-                Storage.movies.filter { it.inFav } as MutableList<MovieDTO>,
+                Storage.movies.filter { it.inFav() } as MutableList<MovieDTO>,
                 colorPair).apply {
                 tapListener = { item, position ->
-                    item.checked = true
+                    Storage.checkedMovies.add(item.id)
                     this.notifyItemChanged(position)
                     listener?.onDetailedClick(item)
                 }
                 longListener = { item, position ->
                     this.items.removeAt(position)
                     this.notifyItemRemoved(position)
-                    Storage.movies.filter { it == item }.forEach { it.inFav = false }
+                    Storage.favMovies.remove(item.id)
                     Snackbar.make(
                         recyclerView,
-                        if (item.inFav) R.string.favorites_added else R.string.favorites_removed,
+                        if (item.inFav()) R.string.favorites_added else R.string.favorites_removed,
                         Snackbar.LENGTH_LONG
                     ).setAction(context?.getString(R.string.cancel)) {
-                        item.inFav = !item.inFav
-                        this.notifyItemInserted(this.items.size - 1)
+                        this.items.add(position, item)
+                        Storage.favMovies.add(item.id)
+                        this.notifyItemInserted(position)
                     }.show()
                 }
             }

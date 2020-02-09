@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getDrawable
@@ -14,15 +15,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.MovieDTO
+import ru.otus.saturn33.movielist.data.MoviesResponse
 import ru.otus.saturn33.movielist.data.Storage
+import ru.otus.saturn33.movielist.network.ApiClient
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
 import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MovieListFragment : Fragment() {
 
+    private var page = 0
+    private var inUpdate = false
     private var listener: OnClickListener? = null
     private var adapterProvider: AdapterProvider? = null
     private var actionBarProvider: ActionBarProvider? = null
@@ -51,9 +59,6 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         actionBarProvider?.changeTitle(getString(R.string.movie_list))
 
-        initRecycler(view)
-        initSwipeRefresh(view)
-
         view.findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -64,8 +69,19 @@ class MovieListFragment : Fragment() {
                 startActivity(sendIntent)
             }
         }
-        view.findViewById<TextView>(R.id.new_movie).setOnClickListener {
-            listener?.onNewClick()
+        page = 0
+        Storage.movies.clear()
+        initRecycler(view)
+        initSwipeRefresh(view)
+        loadNextPage {
+            Storage.movies.addAll(it)
+            val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+            recyclerView.adapter?.notifyItemRangeInserted(
+                Storage.movies.size - it.size,
+                it.size
+            )
+            recyclerView.scrollToPosition(0)
+            inUpdate = false
         }
     }
 
@@ -74,10 +90,17 @@ class MovieListFragment : Fragment() {
         val swipeRefresher = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresher)
         swipeRefresher.setOnRefreshListener {
             recyclerView.adapter?.notifyItemRangeRemoved(0, Storage.movies.size)
+            val size = Storage.movies.size
             Storage.movies.clear()
-            Storage.movies.addAll(Storage.moviesInitial)
-            recyclerView.adapter?.notifyItemRangeInserted(0, Storage.movies.size)
-            swipeRefresher.isRefreshing = false
+            recyclerView.adapter?.notifyItemRangeRemoved(0, size)
+            page = 0
+            loadNextPage {
+                Storage.movies.addAll(it)
+                recyclerView.adapter?.notifyItemRangeInserted(0, Storage.movies.size)
+                recyclerView.scrollToPosition(0)
+                swipeRefresher.isRefreshing = false
+                inUpdate = false
+            }
         }
     }
 
@@ -95,25 +118,27 @@ class MovieListFragment : Fragment() {
         val newAdapter =
             MovieListAdapter(LayoutInflater.from(context), Storage.movies, colorPair).apply {
                 tapListener = { item, position ->
-                    item.checked = true
+                    Storage.checkedMovies.add(item.id)
                     this.notifyItemChanged(position)
                     listener?.onDetailedClick(item)
                 }
                 favListener = { item, position ->
-                    item.inFav = !item.inFav
+                    if (Storage.favMovies.contains(item.id))
+                        Storage.favMovies.remove(item.id)
+                    else
+                        Storage.favMovies.add(item.id)
                     notifyItemChanged(position)
                     Snackbar.make(
                         recyclerView,
-                        if (item.inFav) R.string.favorites_added else R.string.favorites_removed,
+                        if (Storage.favMovies.contains(item.id)) R.string.favorites_added else R.string.favorites_removed,
                         Snackbar.LENGTH_LONG
                     ).setAction(context?.getString(R.string.cancel)) {
-                        item.inFav = !item.inFav
+                        if (Storage.favMovies.contains(item.id))
+                            Storage.favMovies.remove(item.id)
+                        else
+                            Storage.favMovies.add(item.id)
                         this.notifyItemChanged(position)
                     }.show()
-                }
-                longListener = { item, position ->
-                    this.items.removeAt(position)
-                    this.notifyItemRemoved(position)
                 }
             }
 
@@ -134,12 +159,15 @@ class MovieListFragment : Fragment() {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == Storage.movies.size) {
-                    Storage.movies.addAll(Storage.additionalMovies)
-                    recyclerView.adapter?.notifyItemRangeInserted(
-                        Storage.movies.size - Storage.additionalMovies.size,
-                        Storage.additionalMovies.size
-                    )
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == Storage.movies.size && Storage.movies.size > 0) {
+                    loadNextPage {
+                        Storage.movies.addAll(it)
+                        recyclerView.adapter?.notifyItemRangeInserted(
+                            Storage.movies.size - it.size,
+                            it.size
+                        )
+                        inUpdate = false
+                    }
                 }
             }
         })
@@ -162,10 +190,32 @@ class MovieListFragment : Fragment() {
 
     interface OnClickListener {
         fun onDetailedClick(item: MovieDTO)
-        fun onNewClick()
     }
 
     interface AdapterProvider {
         fun onAdapterCreated(adapter: MovieListAdapter)
+    }
+
+    fun loadNextPage(callback: ((List<MovieDTO>) -> Unit)?) {
+        if (inUpdate) return
+        inUpdate = true
+        val call: Call<MoviesResponse>? = ApiClient.service.getTopRatedMovies(page + 1)
+        call?.enqueue(object : Callback<MoviesResponse> {
+            override fun onFailure(call: Call<MoviesResponse>?, t: Throwable?) {
+                Log.e("Main", t.toString())
+                callback?.invoke(listOf())
+            }
+
+            override fun onResponse(
+                call: Call<MoviesResponse>?,
+                response: Response<MoviesResponse>?
+            ) {
+                val movies = response?.body()?.results ?: listOf()
+                val receivedPage = response?.body()?.page ?: 0
+                if (receivedPage > page)
+                    page = receivedPage
+                callback?.invoke(movies)
+            }
+        })
     }
 }

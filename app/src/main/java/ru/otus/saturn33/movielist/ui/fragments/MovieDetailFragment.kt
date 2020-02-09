@@ -28,7 +28,7 @@ class MovieDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO("", "", 0)
+        val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO(0, "", "", 0.0)
 
         view.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
 

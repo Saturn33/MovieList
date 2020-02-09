@@ -10,13 +10,12 @@ import ru.otus.saturn33.movielist.ui.viewholders.MovieListItemViewHolder
 
 class MovieListAdapter(
     private val inflater: LayoutInflater,
-    val items: MutableList<MovieDTO>,
+    private val items: MutableList<MovieDTO>,
     private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var tapListener: ((MovieDTO, position: Int) -> Unit)? = null
     var favListener: ((MovieDTO, position: Int) -> Unit)? = null
-    var longListener: ((MovieDTO, position: Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -25,7 +24,7 @@ class MovieListAdapter(
                     R.layout.item_movie_list,
                     parent,
                     false
-                ), tapListener, favListener, longListener
+                ), tapListener, favListener
             )
             VIEW_TYPE_FOOTER -> MovieListFooterViewHolder(
                 inflater.inflate(

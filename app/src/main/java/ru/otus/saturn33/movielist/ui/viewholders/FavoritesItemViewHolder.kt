@@ -19,7 +19,7 @@ class FavoritesItemViewHolder(
     fun bind(item: MovieDTO, colors: Pair<Int, Int>) {
         imgIv.setImageResource(item.imageId ?: R.drawable.movie_filler)
         titleTv.text = item.name
-        titleTv.setTextColor(if (item.checked) colors.first else colors.second)
+        titleTv.setTextColor(if (item.checked()) colors.first else colors.second)
 
         itemView.setOnClickListener {
             tapListener?.invoke(item, adapterPosition)

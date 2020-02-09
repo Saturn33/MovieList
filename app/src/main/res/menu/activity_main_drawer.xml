@@ -12,9 +12,5 @@
             android:id="@+id/nav_favorite"
             android:icon="@drawable/favorites"
             android:title="@string/favorites" />
-        <item
-            android:id="@+id/nav_new"
-            android:icon="@drawable/new_movie"
-            android:title="@string/title_new_movie" />
     </group>
 </menu>
