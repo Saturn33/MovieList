@@ -15,6 +15,7 @@ class MovieListItemViewHolder(
 ) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
+    private val ratingTv: TextView = itemView.findViewById(R.id.ratingTv)
     private val titleTv: TextView = itemView.findViewById(R.id.titleTv)
     private val inFavIv: ImageView = itemView.findViewById(R.id.inFavIv)
 
@@ -28,6 +29,7 @@ class MovieListItemViewHolder(
             .into(imgIv)
 
         titleTv.text = item.name
+        ratingTv.text = item.rating.toString()
         titleTv.setTextColor(if (item.checked()) colors.first else colors.second)
         inFavIv.setImageResource(if (item.inFav()) R.drawable.favorite_yes else R.drawable.favorite_no)
 

@@ -32,6 +32,27 @@
         tools:text="title" />
 
     <ImageView
+        android:id="@+id/ratingIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_mid"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:contentDescription="@string/rating"
+        android:src="@drawable/star"
+        app:layout_constraintStart_toEndOf="@id/imageIv"
+        app:layout_constraintTop_toBottomOf="@id/titleTv" />
+
+    <TextView
+        android:id="@+id/ratingTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintBottom_toBottomOf="@id/ratingIv"
+        app:layout_constraintStart_toEndOf="@id/ratingIv"
+        app:layout_constraintTop_toTopOf="@id/ratingIv"
+        tools:text="8.5" />
+
+    <ImageView
 
         android:id="@+id/inFavIv"
         android:layout_width="wrap_content"

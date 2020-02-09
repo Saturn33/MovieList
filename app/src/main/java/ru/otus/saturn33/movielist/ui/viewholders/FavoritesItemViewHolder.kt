@@ -15,6 +15,7 @@ class FavoritesItemViewHolder(
 ) :
     RecyclerView.ViewHolder(itemView) {
     private val imgIv: ImageView = itemView.findViewById(R.id.imageIv)
+    private val ratingTv: TextView = itemView.findViewById(R.id.ratingTv)
     private val titleTv: TextView = itemView.findViewById(R.id.titleTv)
 
     fun bind(item: MovieDTO, colors: Pair<Int, Int>) {
@@ -27,6 +28,7 @@ class FavoritesItemViewHolder(
             .into(imgIv)
 
         titleTv.text = item.name
+        ratingTv.text = item.rating.toString()
         titleTv.setTextColor(if (item.checked()) colors.first else colors.second)
 
         itemView.setOnClickListener {
