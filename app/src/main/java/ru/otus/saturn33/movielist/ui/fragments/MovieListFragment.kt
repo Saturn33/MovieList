@@ -74,6 +74,8 @@ class MovieListFragment : Fragment() {
         initRecycler(view)
         initSwipeRefresh(view)
         loadNextPage {
+            if (it.isEmpty())
+                showLoadError(view)
             Storage.movies.addAll(it)
             val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
             recyclerView.adapter?.notifyItemRangeInserted(
@@ -95,6 +97,8 @@ class MovieListFragment : Fragment() {
             recyclerView.adapter?.notifyItemRangeRemoved(0, size)
             page = 0
             loadNextPage {
+                if (it.isEmpty())
+                    showLoadError(view)
                 Storage.movies.addAll(it)
                 recyclerView.adapter?.notifyItemRangeInserted(0, Storage.movies.size)
                 recyclerView.scrollToPosition(0)
@@ -161,6 +165,8 @@ class MovieListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (layoutManager.findLastCompletelyVisibleItemPosition() == Storage.movies.size && Storage.movies.size > 0) {
                     loadNextPage {
+                        if (it.isEmpty())
+                            showLoadError(view)
                         Storage.movies.addAll(it)
                         recyclerView.adapter?.notifyItemRangeInserted(
                             Storage.movies.size - it.size,
@@ -171,6 +177,10 @@ class MovieListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun showLoadError(view: View) {
+        Snackbar.make(view, getString(R.string.error_loading), Snackbar.LENGTH_LONG).show()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
