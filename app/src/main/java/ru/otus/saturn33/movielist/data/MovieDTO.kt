@@ -16,8 +16,7 @@ data class MovieDTO(
     @SerializedName("vote_average")
     val rating: Double,
     @SerializedName("poster_path")
-    val imagePath: String? = null,
-    val imageId: Int? = null//TODO удалить
+    val imagePath: String? = null
 ) : Parcelable {
     fun getPath(): String? = if (imagePath == null) null else "${BaseApi.BASE_IMAGE_URL}$imagePath"
     fun inFav(): Boolean = Storage.favMovies.contains(id)
