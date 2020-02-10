@@ -23,6 +23,7 @@ import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.MoviesResponse
 import ru.otus.saturn33.movielist.data.Storage
 import ru.otus.saturn33.movielist.network.ApiClient
+import ru.otus.saturn33.movielist.network.BaseApi.Companion.LOAD_NEXT_PAGE_BEFORE_LAST_ELEMENTS
 import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
 import ru.otus.saturn33.movielist.ui.decorations.CustomDecoration
 import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
@@ -161,7 +162,7 @@ class MovieListFragment : Fragment() {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == Storage.movies.size && Storage.movies.size > 0) {
+                if (layoutManager.findLastVisibleItemPosition() >= Storage.movies.size - LOAD_NEXT_PAGE_BEFORE_LAST_ELEMENTS && Storage.movies.size > 0) {
                     loadNextPage {
                         if (it.isEmpty())
                             showLoadError(view)
