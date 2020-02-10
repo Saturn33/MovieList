@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        Storage.movies.clear()
         openList()
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))

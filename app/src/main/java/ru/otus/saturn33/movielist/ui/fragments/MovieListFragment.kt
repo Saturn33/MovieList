@@ -29,7 +29,6 @@ import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MovieListFragment : Fragment() {
 
-    private var page = 0
     private var inUpdate = false
     private var listener: OnClickListener? = null
     private var adapterProvider: AdapterProvider? = null
@@ -69,22 +68,21 @@ class MovieListFragment : Fragment() {
                 startActivity(sendIntent)
             }
         }
-        page = 0
-        Storage.movies.clear()
         initRecycler(view)
         initSwipeRefresh(view)
-        loadNextPage {
-            if (it.isEmpty())
-                showLoadError(view)
-            Storage.movies.addAll(it)
-            val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-            recyclerView.adapter?.notifyItemRangeInserted(
-                Storage.movies.size - it.size,
-                it.size
-            )
-            recyclerView.scrollToPosition(0)
-            inUpdate = false
-        }
+        if (Storage.movies.size == 0)
+            loadNextPage {
+                if (it.isEmpty())
+                    showLoadError(view)
+                Storage.movies.addAll(it)
+                val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+                recyclerView.adapter?.notifyItemRangeInserted(
+                    Storage.movies.size - it.size,
+                    it.size
+                )
+                recyclerView.scrollToPosition(0)
+                inUpdate = false
+            }
     }
 
     private fun initSwipeRefresh(view: View) {
@@ -95,7 +93,7 @@ class MovieListFragment : Fragment() {
             val size = Storage.movies.size
             Storage.movies.clear()
             recyclerView.adapter?.notifyItemRangeRemoved(0, size)
-            page = 0
+            Storage.page = 0
             loadNextPage {
                 if (it.isEmpty())
                     showLoadError(view)
@@ -209,7 +207,7 @@ class MovieListFragment : Fragment() {
     fun loadNextPage(callback: ((List<MovieDTO>) -> Unit)?) {
         if (inUpdate) return
         inUpdate = true
-        val call: Call<MoviesResponse>? = ApiClient.service.getTopRatedMovies(page + 1)
+        val call: Call<MoviesResponse>? = ApiClient.service.getTopRatedMovies(Storage.page + 1)
         call?.enqueue(object : Callback<MoviesResponse> {
             override fun onFailure(call: Call<MoviesResponse>?, t: Throwable?) {
                 Log.e("Main", t.toString())
@@ -222,8 +220,8 @@ class MovieListFragment : Fragment() {
             ) {
                 val movies = response?.body()?.results ?: listOf()
                 val receivedPage = response?.body()?.page ?: 0
-                if (receivedPage > page)
-                    page = receivedPage
+                if (receivedPage > Storage.page)
+                    Storage.page = receivedPage
                 callback?.invoke(movies)
             }
         })
