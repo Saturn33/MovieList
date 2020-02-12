@@ -110,7 +110,17 @@ class MovieListFragment : Fragment() {
     private fun initRecycler(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         val layoutManager = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(context, 2)
+            Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(context, 2).apply {
+                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when (recyclerView.adapter?.getItemViewType(position)) {
+                            MovieListAdapter.VIEW_TYPE_ITEM -> 1
+                            MovieListAdapter.VIEW_TYPE_FOOTER -> 2
+                            else -> -1
+                        }
+                    }
+                }
+            }
             else -> LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
         val colorPair = Pair(
@@ -162,6 +172,7 @@ class MovieListFragment : Fragment() {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                Storage.lastSeenPosition = layoutManager.findFirstVisibleItemPosition()
                 if (layoutManager.findLastVisibleItemPosition() >= Storage.movies.size - LOAD_NEXT_PAGE_BEFORE_LAST_ELEMENTS && Storage.movies.size > 0) {
                     loadNextPage {
                         if (it.isEmpty())
@@ -176,6 +187,9 @@ class MovieListFragment : Fragment() {
                 }
             }
         })
+
+        if (Storage.lastSeenPosition > 0)
+            layoutManager.scrollToPosition(Storage.lastSeenPosition)
     }
 
     private fun showLoadError(view: View) {

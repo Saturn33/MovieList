@@ -5,4 +5,5 @@ object Storage {
     val favMovies: MutableSet<Int> = mutableSetOf()
     val checkedMovies: MutableSet<Int> = mutableSetOf()
     var page = 0
+    var lastSeenPosition = 0
 }
