@@ -28,4 +28,6 @@
     <string name="favorites_removed">Removed from favorites</string>
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
+    <string name="rating">rating</string>
+    <string name="error_loading">Error loading list, please try again</string>
 </resources>

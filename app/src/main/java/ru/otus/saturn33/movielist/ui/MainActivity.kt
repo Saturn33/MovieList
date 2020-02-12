@@ -19,14 +19,13 @@ import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
 import ru.otus.saturn33.movielist.ui.fragments.MovieDetailFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
-import ru.otus.saturn33.movielist.ui.fragments.NewMovieFragment
 import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     MovieListFragment.AdapterProvider,
     MovieFavoritesFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
-    NewMovieFragment.OnNewMovieClickListener, ActionBarProvider {
+    ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
     private var movieListAdapter: MovieListAdapter? = null
 
@@ -61,8 +60,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        Storage.movies.clear()
-        Storage.movies.addAll(Storage.moviesInitial)
         openList()
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
@@ -97,7 +94,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.fragments.last {
                 when (it.tag) {
-                    MovieDetailFragment.TAG, NewMovieFragment.TAG -> {
+                    MovieDetailFragment.TAG -> {
                         activityToolbar.visibility = View.GONE
                         val fragmentToolbar = it.view?.findViewById<Toolbar>(R.id.toolbarAdvanced)
                         setSupportActionBar(fragmentToolbar)
@@ -148,16 +145,12 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     companion object {
         const val THEME_KEY = "theme"
         const val FRAGMENT_DETAILS = "FragmentDetails"
-        const val FRAGMENT_NEW = "FragmentNew"
     }
 
     override fun onDetailedClick(item: MovieDTO) {
         openDetailed(item)
     }
 
-    override fun onNewClick() {
-        openNewMovie()
-    }
 
     private fun openDetailed(item: MovieDTO) {
         supportFragmentManager
@@ -188,30 +181,15 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         ft.commit()
     }
 
-    private fun openNewMovie() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainer, NewMovieFragment(), NewMovieFragment.TAG)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .addToBackStack(FRAGMENT_NEW)
-            .commit()
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_list -> openList()
             R.id.nav_favorite -> openFavorites()
-            R.id.nav_new -> openNewMovie()
         }
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
 
         return true
-    }
-
-    override fun onNewMovieClick(item: MovieDTO) {
-        Storage.movies.add(item)
-        movieListAdapter?.notifyItemInserted(Storage.movies.size)
     }
 
     override fun onAdapterCreated(adapter: MovieListAdapter) {

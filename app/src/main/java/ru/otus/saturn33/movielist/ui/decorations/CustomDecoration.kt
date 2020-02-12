@@ -24,7 +24,7 @@ class CustomDecoration(
         val right = parent.width - parent.paddingRight - paddingRight
 
         val childCount = parent.childCount
-        for (i in 0 until childCount) {
+        for (i in 0 until childCount - 1) {//- 1: футеру не нужен декоратор
             val child = parent.getChildAt(i)
             val params = child.layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin

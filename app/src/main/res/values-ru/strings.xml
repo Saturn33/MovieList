@@ -28,4 +28,6 @@
     <string name="cancel">Отменить</string>
     <string name="navigation_drawer_close">Закрыть</string>
     <string name="navigation_drawer_open">Открыть</string>
+    <string name="rating">рейтинг</string>
+    <string name="error_loading">Ошибка загрузки, попробуйте ещё раз</string>
 </resources>
