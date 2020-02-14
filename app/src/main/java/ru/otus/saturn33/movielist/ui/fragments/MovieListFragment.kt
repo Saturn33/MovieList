@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,6 +58,7 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        ViewModelProvider(activity!!).get()
         actionBarProvider?.changeTitle(getString(R.string.movie_list))
 
         view.findViewById<TextView>(R.id.invite).setOnClickListener {
