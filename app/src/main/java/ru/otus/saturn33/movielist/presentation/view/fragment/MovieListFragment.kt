@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,6 +23,7 @@ import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
 import ru.otus.saturn33.movielist.presentation.decoration.CustomDecoration
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
+import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
 
 class MovieListFragment : Fragment() {
 
@@ -68,7 +70,9 @@ class MovieListFragment : Fragment() {
         }
 
         viewModel = activity?.let {
-            ViewModelProvider(it).get(MovieListViewModel::class.java)
+            ViewModelProvider(it, MovieListViewModelFactory(getString(R.string.factory_message))).get(
+                MovieListViewModel::class.java
+            )
         }
         viewModel?.movies?.observe(this.viewLifecycleOwner, Observer<List<MovieDTO>> {
             moviesAdapter?.setItems(it)
@@ -80,8 +84,12 @@ class MovieListFragment : Fragment() {
             }
 
         })
-        viewModel?.error?.observe(this.viewLifecycleOwner, Observer<String?> {
+        viewModel?.error?.observe(this.viewLifecycleOwner, Observer {
             handleError(view, it)
+        })
+
+        viewModel?.toast?.observe(this.viewLifecycleOwner, Observer {
+            handleToast(view, it)
         })
 
         initRecycler(view)
@@ -107,6 +115,15 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    private fun handleToast(view: View, message: String?) {
+        if (message == null) {
+            return
+        } else {
+            Toast.makeText(view.context, message, Toast.LENGTH_LONG).show()
+            viewModel?.onToastHandled()
+        }
+    }
+
     private fun initSwipeRefresh(view: View) {
         val swipeRefresher = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresher)
         swipeRefresher.setOnRefreshListener {
@@ -120,7 +137,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun initRecycler(view: View) {
-        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = view.findViewById(R.id.recyclerView)
         val layoutManager = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(context, 2).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -142,10 +159,10 @@ class MovieListFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         moviesAdapter =
             MovieListAdapter(LayoutInflater.from(context), colorPair).apply {
-                tapListener = { item, position ->
+                tapListener = { item, _ ->
                     listener?.onDetailedClick(item)
                 }
-                favListener = { item, position ->
+                favListener = { item, _ ->
                     viewModel?.onMovieLike(item)
                     Snackbar.make(
                         recyclerView,

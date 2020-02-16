@@ -8,16 +8,22 @@ import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
 
-class MovieListViewModel : ViewModel() {
+class MovieListViewModel(message: String?) : ViewModel() {
     private val errorLiveData = MutableLiveData<String?>()
+    private val toastLiveData = MutableLiveData<String?>()
     private val moviesLiveData = MutableLiveData<List<MovieDTO>>()
     private val selectedMovieLiveData = MutableLiveData<MovieDTO>()
     private val swipeRefresherLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     private val lastSeenPositionLiveData: MutableLiveData<Int> = MutableLiveData(0)
     private val inUpdateLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     private val isFirstAddLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-
     private val moviesInteractor = App.instance!!.moviesInteractor
+
+    init {
+        if (message != null) {
+            toastLiveData.postValue(message)
+        }
+    }
 
     val error: LiveData<String?>
         get() = errorLiveData
@@ -42,6 +48,9 @@ class MovieListViewModel : ViewModel() {
 
     val isFirstAdd: LiveData<Boolean>
         get() = isFirstAddLiveData
+
+    val toast: LiveData<String?>
+        get() = toastLiveData
 
     private fun addInfo(movies: List<MovieDTO>): List<MovieDTO> {
         for (movie in movies) {
@@ -83,6 +92,10 @@ class MovieListViewModel : ViewModel() {
 
     fun onErrorHandled() {
         errorLiveData.postValue(null)
+    }
+
+    fun onToastHandled() {
+        toastLiveData.postValue(null)
     }
 
     fun onNextPageRequest() {
