@@ -38,8 +38,7 @@ class MovieListItemViewHolder(
         }
 
         inFavIv.setOnClickListener {
-            val pos = adapterPosition
-            favListener?.invoke(item, pos)
+            favListener?.invoke(item, adapterPosition)
         }
     }
 }

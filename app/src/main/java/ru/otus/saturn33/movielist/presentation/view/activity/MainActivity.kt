@@ -10,23 +10,22 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
-import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
+import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
-import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
+import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 
-class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
-    MovieListFragment.AdapterProvider,
+class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListener,
     MovieFavoritesFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
-    private var movieListAdapter: MovieListAdapter? = null
 
     private fun setThemeCycle() {
         themeMode =
@@ -59,7 +58,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        openList()
+        if (savedInstanceState == null) {
+            openList()
+        }
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
     }
@@ -150,16 +151,12 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         openDetailed(item)
     }
 
-
-    private fun openDetailed(item: MovieDTO) {
-        //TODO Вызвать onMovieSelect вьюмодели и не передавать item в параметры фрагмента
+    private fun openDetailed(item: MovieDTO? = null) {
+        if (item != null)
+            ViewModelProvider(this).get(MovieListViewModel::class.java).onMovieSelect(item)
         supportFragmentManager
             .beginTransaction()
-            .replace(
-                R.id.fragmentContainer,
-                MovieDetailFragment.newInstance(item),
-                MovieDetailFragment.TAG
-            )
+            .replace(R.id.fragmentContainer, MovieDetailFragment(), MovieDetailFragment.TAG)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .addToBackStack(FRAGMENT_DETAILS)
             .commit()
@@ -174,11 +171,11 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     }
 
     private fun openList() {
-        val ft = supportFragmentManager
+        supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        ft.commit()
+            .commit()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -190,10 +187,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         drawer.closeDrawer(GravityCompat.START)
 
         return true
-    }
-
-    override fun onAdapterCreated(adapter: MovieListAdapter?) {
-        movieListAdapter = adapter
     }
 
     override fun changeTitle(title: String) {

@@ -2,6 +2,7 @@ package ru.otus.saturn33.movielist.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
@@ -9,12 +10,20 @@ import ru.otus.saturn33.movielist.presentation.viewholder.FavoritesItemViewHolde
 
 class FavoritesListAdapter(
     private val inflater: LayoutInflater,
-    val items: MutableList<MovieDTO>,
     private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var tapListener: ((MovieDTO, Int) -> Unit)? = null
     var longListener: ((MovieDTO, Int) -> Unit)? = null
+    val items : MutableList<MovieDTO> = mutableListOf()
+
+    fun setItems(movies: List<MovieDTO>) {
+        val diffResult = DiffUtil.calculateDiff(MovieListDiff(items, movies))
+        items.clear()
+        items.addAll(movies.map { it.copy() })
+
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

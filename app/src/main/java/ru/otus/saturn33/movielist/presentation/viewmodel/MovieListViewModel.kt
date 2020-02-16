@@ -24,6 +24,9 @@ class MovieListViewModel : ViewModel() {
     val movies: LiveData<List<MovieDTO>>
         get() = Transformations.map(moviesLiveData, ::addInfo)
 
+    val moviesFav: LiveData<List<MovieDTO>>
+        get() = Transformations.map(moviesLiveData, ::filterFav)
+
     val selectedMovie: LiveData<MovieDTO>
         get() = selectedMovieLiveData
 
@@ -40,6 +43,10 @@ class MovieListViewModel : ViewModel() {
         }
 
         return movies
+    }
+
+    private fun filterFav(movies: List<MovieDTO>): List<MovieDTO> {
+        return addInfo(movies).filter { it.inFav }
     }
 
     fun onMovieSelect(movie: MovieDTO) {
@@ -61,7 +68,7 @@ class MovieListViewModel : ViewModel() {
     fun onClear() {
         moviesInteractor.setCurrentPage(0)
         moviesInteractor.clearCache()
-        moviesLiveData.postValue(mutableListOf())
+        moviesLiveData.postValue(listOf())
     }
 
     fun onNextPageRequest() {

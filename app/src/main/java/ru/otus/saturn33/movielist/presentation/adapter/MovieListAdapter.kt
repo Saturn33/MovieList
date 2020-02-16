@@ -16,12 +16,12 @@ class MovieListAdapter(
 
     var tapListener: ((MovieDTO, position: Int) -> Unit)? = null
     var favListener: ((MovieDTO, position: Int) -> Unit)? = null
-    private val items : MutableList<MovieDTO> = mutableListOf()
+    val items : MutableList<MovieDTO> = mutableListOf()
 
     fun setItems(movies: List<MovieDTO>) {
         val diffResult = DiffUtil.calculateDiff(MovieListDiff(items, movies))
         items.clear()
-        items.addAll(movies)
+        items.addAll(movies.map { it.copy() })
 
         diffResult.dispatchUpdatesTo(this)
     }

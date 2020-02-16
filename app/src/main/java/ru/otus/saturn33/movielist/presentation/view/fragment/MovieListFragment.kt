@@ -25,9 +25,7 @@ import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 
 class MovieListFragment : Fragment() {
 
-    private var inUpdate = false
-    private var listener: OnClickListener? = null
-    private var adapterProvider: AdapterProvider? = null
+    private var listener: OnDetailedClickListener? = null
     private var actionBarProvider: ActionBarProvider? = null
 
     private var viewModel: MovieListViewModel? = null
@@ -132,7 +130,6 @@ class MovieListFragment : Fragment() {
             }
 
         recyclerView.adapter = moviesAdapter
-        adapterProvider?.onAdapterCreated(moviesAdapter)
 
         getDrawable(context!!, R.drawable.custom_line)?.let {
             recyclerView.addItemDecoration(
@@ -167,11 +164,8 @@ class MovieListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (activity is OnClickListener) {
-            listener = activity as OnClickListener
-        }
-        if (activity is AdapterProvider) {
-            adapterProvider = activity as AdapterProvider
+        if (activity is OnDetailedClickListener) {
+            listener = activity as OnDetailedClickListener
         }
     }
 
@@ -180,11 +174,7 @@ class MovieListFragment : Fragment() {
         const val LOAD_NEXT_PAGE_BEFORE_LAST_ELEMENTS = 5
     }
 
-    interface OnClickListener {
+    interface OnDetailedClickListener {
         fun onDetailedClick(item: MovieDTO)
-    }
-
-    interface AdapterProvider {
-        fun onAdapterCreated(adapter: MovieListAdapter?)
     }
 }
