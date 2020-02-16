@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.fragments
+package ru.otus.saturn33.movielist.presentation.view.fragment
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
 import ru.otus.saturn33.movielist.data.Storage
-import ru.otus.saturn33.movielist.ui.adapters.FavoritesListAdapter
-import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
+import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
+import ru.otus.saturn33.movielist.presentation.adapter.FavoritesListAdapter
 
 class MovieFavoritesFragment : Fragment() {
 
@@ -57,24 +57,24 @@ class MovieFavoritesFragment : Fragment() {
         recyclerView.adapter =
             FavoritesListAdapter(
                 LayoutInflater.from(context),
-                Storage.movies.filter { it.inFav() } as MutableList<MovieDTO>,
+                Storage.movies.filter { it.inFav } as MutableList<MovieDTO>,
                 colorPair).apply {
                 tapListener = { item, position ->
-                    Storage.checkedMovies.add(item.id)
+                    //                    Storage.checkedMovies.add(item.id)
                     this.notifyItemChanged(position)
                     listener?.onDetailedClick(item)
                 }
                 longListener = { item, position ->
                     this.items.removeAt(position)
                     this.notifyItemRemoved(position)
-                    Storage.favMovies.remove(item.id)
+//                    Storage.favMovies.remove(item.id)
                     Snackbar.make(
                         recyclerView,
-                        if (item.inFav()) R.string.favorites_added else R.string.favorites_removed,
+                        if (item.inFav) R.string.favorites_added else R.string.favorites_removed,
                         Snackbar.LENGTH_LONG
                     ).setAction(context?.getString(R.string.cancel)) {
                         this.items.add(position, item)
-                        Storage.favMovies.add(item.id)
+//                        Storage.favMovies.add(item.id)
                         this.notifyItemInserted(position)
                     }.show()
                 }

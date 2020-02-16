@@ -1,11 +1,11 @@
-package ru.otus.saturn33.movielist.ui.adapters
+package ru.otus.saturn33.movielist.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.viewholders.FavoritesItemViewHolder
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
+import ru.otus.saturn33.movielist.presentation.viewholder.FavoritesItemViewHolder
 
 class FavoritesListAdapter(
     private val inflater: LayoutInflater,

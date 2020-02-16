@@ -1,21 +1,36 @@
-package ru.otus.saturn33.movielist.ui.adapters
+package ru.otus.saturn33.movielist.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.viewholders.MovieListFooterViewHolder
-import ru.otus.saturn33.movielist.ui.viewholders.MovieListItemViewHolder
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
+import ru.otus.saturn33.movielist.presentation.viewholder.MovieListFooterViewHolder
+import ru.otus.saturn33.movielist.presentation.viewholder.MovieListItemViewHolder
 
 class MovieListAdapter(
     private val inflater: LayoutInflater,
-    private val items: MutableList<MovieDTO>,
     private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var tapListener: ((MovieDTO, position: Int) -> Unit)? = null
     var favListener: ((MovieDTO, position: Int) -> Unit)? = null
+    private val items : MutableList<MovieDTO> = mutableListOf()
+
+    fun setItems(movies: List<MovieDTO>) {
+        val diffResult = DiffUtil.calculateDiff(MovieListDiff(items, movies))
+        items.clear()
+        items.addAll(movies)
+
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun clearItems() {
+        val diffResult = DiffUtil.calculateDiff(MovieListDiff(items, listOf()))
+        items.clear()
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

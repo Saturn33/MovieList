@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.data
+package ru.otus.saturn33.movielist.data.entity
 
 import com.google.gson.annotations.SerializedName
 

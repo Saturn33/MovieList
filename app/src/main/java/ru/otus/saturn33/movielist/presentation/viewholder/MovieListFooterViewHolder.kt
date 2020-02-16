@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.viewholders
+package ru.otus.saturn33.movielist.presentation.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

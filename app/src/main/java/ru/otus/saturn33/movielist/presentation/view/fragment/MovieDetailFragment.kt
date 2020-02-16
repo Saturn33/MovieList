@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.fragments
+package ru.otus.saturn33.movielist.presentation.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
 
 class MovieDetailFragment : Fragment() {
     override fun onCreateView(
@@ -29,13 +29,18 @@ class MovieDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO(0, "", "", 0.0)
+        val movie = arguments?.getParcelable(EXTRA_ITEM) ?: MovieDTO(
+            0,
+            "",
+            "",
+            0.0
+        )
 
         view.findViewById<Toolbar>(R.id.toolbarAdvanced)?.title = movie.name
 
         val img: ImageView = view.findViewById(R.id.image)
         Glide.with(view)
-            .load(movie.getPath())
+            .load(movie.imageURL)
             .placeholder(R.drawable.movie_filler)
             .fallback(R.drawable.movie_filler)
             .error(R.drawable.movie_filler)

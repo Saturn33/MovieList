@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui
+package ru.otus.saturn33.movielist.presentation.view.activity
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,13 +12,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
-import ru.otus.saturn33.movielist.ui.adapters.MovieListAdapter
-import ru.otus.saturn33.movielist.ui.dialogs.ExitDialog
-import ru.otus.saturn33.movielist.ui.fragments.MovieDetailFragment
-import ru.otus.saturn33.movielist.ui.fragments.MovieFavoritesFragment
-import ru.otus.saturn33.movielist.ui.fragments.MovieListFragment
-import ru.otus.saturn33.movielist.ui.interfaces.ActionBarProvider
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
+import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
+import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
+import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
+import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
+import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
+import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
     MovieListFragment.AdapterProvider,
@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
 
 
     private fun openDetailed(item: MovieDTO) {
+        //TODO Вызвать onMovieSelect вьюмодели и не передавать item в параметры фрагмента
         supportFragmentManager
             .beginTransaction()
             .replace(
@@ -191,7 +192,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnClickListener,
         return true
     }
 
-    override fun onAdapterCreated(adapter: MovieListAdapter) {
+    override fun onAdapterCreated(adapter: MovieListAdapter?) {
         movieListAdapter = adapter
     }
 
