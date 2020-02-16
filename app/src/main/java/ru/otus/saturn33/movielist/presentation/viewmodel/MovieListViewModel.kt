@@ -12,9 +12,10 @@ class MovieListViewModel : ViewModel() {
     private val errorLiveData = MutableLiveData<String?>()
     private val moviesLiveData = MutableLiveData<List<MovieDTO>>()
     private val selectedMovieLiveData = MutableLiveData<MovieDTO>()
-    private val swipeRefreshenerLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
-    var lastSeenPosition = 0
-    var inUpdate = false
+    private val swipeRefresherLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val lastSeenPositionLiveData: MutableLiveData<Int> = MutableLiveData(0)
+    private val inUpdateLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val isFirstAddLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
 
     private val moviesInteractor = App.instance!!.moviesInteractor
 
@@ -30,9 +31,17 @@ class MovieListViewModel : ViewModel() {
     val selectedMovie: LiveData<MovieDTO>
         get() = selectedMovieLiveData
 
-    val swipeRefreshener: LiveData<Boolean>
-        get() = swipeRefreshenerLiveData
+    val swipeRefresher: LiveData<Boolean>
+        get() = swipeRefresherLiveData
 
+    val lastSeenPosition: LiveData<Int>
+        get() = lastSeenPositionLiveData
+
+    val inUpdate: LiveData<Boolean>
+        get() = inUpdateLiveData
+
+    val isFirstAdd: LiveData<Boolean>
+        get() = isFirstAddLiveData
 
     private fun addInfo(movies: List<MovieDTO>): List<MovieDTO> {
         for (movie in movies) {
@@ -62,31 +71,47 @@ class MovieListViewModel : ViewModel() {
 
     fun onRefresh() {
         onClear()
-        swipeRefreshenerLiveData.postValue(true)
+        swipeRefresherLiveData.postValue(true)
     }
 
-    fun onClear() {
+    private fun onClear() {
         moviesInteractor.setCurrentPage(0)
         moviesInteractor.clearCache()
         moviesLiveData.postValue(listOf())
+        isFirstAddLiveData.postValue(true)
+    }
+
+    fun onErrorHandled() {
+        errorLiveData.postValue(null)
     }
 
     fun onNextPageRequest() {
-        if (inUpdate) return
-        inUpdate = true
+        if (inUpdateLiveData.value == true) return
+        inUpdateLiveData.postValue(true)
         moviesInteractor.getTopRatedMovies(moviesInteractor.getCurrentPage() + 1,
             object : MoviesInteractor.GetMoviesCallback {
                 override fun onSuccess(movies: List<MovieDTO>) {
                     moviesLiveData.postValue(movies)
-                    swipeRefreshenerLiveData.postValue(false)
-                    inUpdate = false
+                    swipeRefresherLiveData.postValue(false)
+                    inUpdateLiveData.postValue(false)
                 }
 
                 override fun onError(error: String) {
                     errorLiveData.postValue(error)
-                    swipeRefreshenerLiveData.postValue(false)
-                    inUpdate = false
+                    swipeRefresherLiveData.postValue(false)
+                    inUpdateLiveData.postValue(false)
                 }
             })
     }
+
+    fun setLastSeenPosition(position: Int) {
+        lastSeenPositionLiveData.postValue(position)
+    }
+
+    fun onFirstPageScrolled() {
+        isFirstAddLiveData.postValue(false)
+    }
+
+    fun getCurrentPage() = moviesInteractor.getCurrentPage()
+
 }

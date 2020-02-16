@@ -30,6 +30,7 @@ class MovieListFragment : Fragment() {
 
     private var viewModel: MovieListViewModel? = null
     private var moviesAdapter: MovieListAdapter? = null
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,12 +72,39 @@ class MovieListFragment : Fragment() {
         }
         viewModel?.movies?.observe(this.viewLifecycleOwner, Observer<List<MovieDTO>> {
             moviesAdapter?.setItems(it)
+            viewModel?.isFirstAdd?.value?.let { isFirst ->
+                if (isFirst) {
+                    recyclerView.layoutManager?.scrollToPosition(0)
+                    viewModel?.onFirstPageScrolled()
+                }
+            }
+
+        })
+        viewModel?.error?.observe(this.viewLifecycleOwner, Observer<String?> {
+            handleError(view, it)
         })
 
         initRecycler(view)
         initSwipeRefresh(view)
 
-        viewModel?.onNextPageRequest()
+        if (viewModel?.getCurrentPage() ?: 0 < 1) {
+            viewModel?.onNextPageRequest()
+        }
+    }
+
+    private fun handleError(view: View, error: String?) {
+        if (error == null) {
+            return
+        } else {
+            Snackbar.make(
+                view,
+                error,
+                Snackbar.LENGTH_LONG
+            ).setAction(getString(R.string.retry)) {
+                viewModel?.onNextPageRequest()
+            }.show()
+            viewModel?.onErrorHandled()
+        }
     }
 
     private fun initSwipeRefresh(view: View) {
@@ -86,13 +114,13 @@ class MovieListFragment : Fragment() {
             viewModel?.onRefresh()
             viewModel?.onNextPageRequest()
         }
-        viewModel?.swipeRefreshener?.observe(this.viewLifecycleOwner, Observer<Boolean> {
+        viewModel?.swipeRefresher?.observe(this.viewLifecycleOwner, Observer<Boolean> {
             swipeRefresher.isRefreshing = it
         })
     }
 
     private fun initRecycler(view: View) {
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         val layoutManager = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> GridLayoutManager(context, 2).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -145,7 +173,7 @@ class MovieListFragment : Fragment() {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                viewModel?.lastSeenPosition = layoutManager.findFirstVisibleItemPosition()
+                viewModel?.setLastSeenPosition(layoutManager.findFirstVisibleItemPosition())
                 moviesAdapter?.let {
                     if (layoutManager.findLastVisibleItemPosition() >= it.itemCount - 1 - LOAD_NEXT_PAGE_BEFORE_LAST_ELEMENTS && it.itemCount > 0) {
                         viewModel?.onNextPageRequest()
@@ -154,10 +182,8 @@ class MovieListFragment : Fragment() {
             }
         })
 
-        viewModel?.lastSeenPosition?.let {
-            if (it > 0) {
-                layoutManager.scrollToPosition(it)
-            }
+        viewModel?.lastSeenPosition?.value?.let {
+            layoutManager.scrollToPosition(it)
         }
     }
 
