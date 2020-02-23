@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.network
+package ru.otus.saturn33.movielist.data.network
 
 import android.util.Log
 import com.google.gson.GsonBuilder

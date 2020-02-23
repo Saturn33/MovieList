@@ -30,4 +30,6 @@
     <string name="navigation_drawer_close">Close</string>
     <string name="rating">rating</string>
     <string name="error_loading">Error loading list, please try again</string>
+    <string name="retry">Retry</string>
+    <string name="factory_message">test factory message</string>
 </resources>

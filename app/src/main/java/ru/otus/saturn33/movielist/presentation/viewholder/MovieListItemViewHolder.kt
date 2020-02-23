@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.viewholders
+package ru.otus.saturn33.movielist.presentation.viewholder
 
 import android.view.View
 import android.widget.ImageView
@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.otus.saturn33.movielist.R
-import ru.otus.saturn33.movielist.data.MovieDTO
+import ru.otus.saturn33.movielist.data.entity.MovieDTO
 
 class MovieListItemViewHolder(
     itemView: View,
@@ -21,7 +21,7 @@ class MovieListItemViewHolder(
 
     fun bind(item: MovieDTO, colors: Pair<Int, Int>) {
         Glide.with(itemView)
-            .load(item.getPath())
+            .load(item.imageURL)
             .centerCrop()
             .placeholder(R.drawable.movie_filler)
             .fallback(R.drawable.movie_filler)
@@ -30,16 +30,15 @@ class MovieListItemViewHolder(
 
         titleTv.text = item.name
         ratingTv.text = item.rating.toString()
-        titleTv.setTextColor(if (item.checked()) colors.first else colors.second)
-        inFavIv.setImageResource(if (item.inFav()) R.drawable.favorite_yes else R.drawable.favorite_no)
+        titleTv.setTextColor(if (item.checked) colors.first else colors.second)
+        inFavIv.setImageResource(if (item.inFav) R.drawable.favorite_yes else R.drawable.favorite_no)
 
         itemView.setOnClickListener {
             tapListener?.invoke(item, adapterPosition)
         }
 
         inFavIv.setOnClickListener {
-            val pos = adapterPosition
-            favListener?.invoke(item, pos)
+            favListener?.invoke(item, adapterPosition)
         }
     }
 }

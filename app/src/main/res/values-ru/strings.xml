@@ -30,4 +30,6 @@
     <string name="navigation_drawer_open">Открыть</string>
     <string name="rating">рейтинг</string>
     <string name="error_loading">Ошибка загрузки, попробуйте ещё раз</string>
+    <string name="retry">Повторить</string>
+    <string name="factory_message">тестовое сообщение из фабрики</string>
 </resources>

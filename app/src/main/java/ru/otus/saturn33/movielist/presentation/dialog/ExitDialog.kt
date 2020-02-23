@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.dialogs
+package ru.otus.saturn33.movielist.presentation.dialog
 
 import android.app.Dialog
 import android.content.Context

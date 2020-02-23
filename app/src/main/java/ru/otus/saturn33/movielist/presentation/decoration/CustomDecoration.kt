@@ -1,4 +1,4 @@
-package ru.otus.saturn33.movielist.ui.decorations
+package ru.otus.saturn33.movielist.presentation.decoration
 
 import android.content.Context
 import android.graphics.Canvas
