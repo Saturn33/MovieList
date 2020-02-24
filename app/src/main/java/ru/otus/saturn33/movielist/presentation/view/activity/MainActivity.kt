@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
-import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
+import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
