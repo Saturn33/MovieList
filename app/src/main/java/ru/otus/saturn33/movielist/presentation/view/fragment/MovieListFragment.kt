@@ -17,11 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
-import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
 import ru.otus.saturn33.movielist.presentation.decoration.CustomDecoration
+import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
 
@@ -70,7 +71,7 @@ class MovieListFragment : Fragment() {
         }
 
         viewModel = activity?.let {
-            ViewModelProvider(it, MovieListViewModelFactory(getString(R.string.factory_message))).get(
+            ViewModelProvider(it, MovieListViewModelFactory(App.instance!!, null)).get(
                 MovieListViewModel::class.java
             )
         }

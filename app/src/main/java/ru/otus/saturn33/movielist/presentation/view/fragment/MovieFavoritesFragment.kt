@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
-import ru.otus.saturn33.movielist.presentation.`interface`.ActionBarProvider
+import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.adapter.FavoritesListAdapter
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 

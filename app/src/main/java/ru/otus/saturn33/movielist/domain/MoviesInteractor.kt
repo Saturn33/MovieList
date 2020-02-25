@@ -1,12 +1,19 @@
 package ru.otus.saturn33.movielist.domain
 
+import android.content.Context
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.data.entity.MoviesResponse
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository
+import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOVIES_CACHE_TTL
+import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOVIES_LAST_ACCESS
+import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.SHARED_NAME
 import ru.otus.saturn33.movielist.data.service.MovieDBService
+import java.util.*
+import java.util.concurrent.Executors
 
 class MoviesInteractor(
     private val movieDBService: MovieDBService,
@@ -14,28 +21,38 @@ class MoviesInteractor(
 ) {
 
     fun getTopRatedMovies(page: Int = 1, callback: GetMoviesCallback) {
-        movieDBService.getTopRatedMovies(page).enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-//                moviesRepository.addToCache(moviesRepository.cachedOrFakeMovies)
-//                callback.onSuccess(moviesRepository.cachedOrFakeMovies) //TODO удалить
-                callback.onError(t.message ?: "Unknown error")
-            }
+        val pref = App.instance!!.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE)
+        val lastAccess = pref.getLong(MOVIES_LAST_ACCESS, 0)
+        val now = Date().time
 
-            override fun onResponse(
-                call: Call<MoviesResponse>,
-                response: Response<MoviesResponse>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()!!.results?.let { moviesRepository.addToCache(it) }
-                    if (response.body()!!.page > moviesRepository.page)
-                        moviesRepository.page = response.body()!!.page
-                    callback.onSuccess(moviesRepository.cachedOrFakeMovies)
-                } else {
-                    callback.onError(response.code().toString() + " " + response.errorBody())
+        if (now - lastAccess > MOVIES_CACHE_TTL) {
+            movieDBService.getTopRatedMovies(page).enqueue(object : Callback<MoviesResponse> {
+                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                    callback.onError(t.message ?: "Unknown error")
                 }
-            }
 
-        })
+                override fun onResponse(
+                    call: Call<MoviesResponse>,
+                    response: Response<MoviesResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()!!.results?.let { moviesRepository.addToCache(it) }
+                        if (response.body()!!.page > moviesRepository.page)
+                            moviesRepository.page = response.body()!!.page
+                        Executors.newSingleThreadExecutor().submit {
+                            callback.onSuccess(moviesRepository.cachedMovies)
+                        }
+                    } else {
+                        callback.onError(response.code().toString() + " " + response.errorBody())
+                    }
+                }
+
+            })
+        } else {
+            Executors.newSingleThreadExecutor().submit {
+                callback.onSuccess(moviesRepository.cachedMovies)
+            }
+        }
     }
 
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)

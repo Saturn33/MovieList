@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.otus.saturn33.movielist.data.database.Db
 import ru.otus.saturn33.movielist.data.network.LoggerInterceptor
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository
 import ru.otus.saturn33.movielist.data.service.MovieDBService
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit
 class App : Application() {
     lateinit var movieDBService: MovieDBService
     lateinit var moviesInteractor: MoviesInteractor
-    var moviesRepository = MoviesRepository()
+    lateinit var moviesRepository: MoviesRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -22,7 +23,14 @@ class App : Application() {
         instance = this
 
         initRetrofit()
+        initRoom()
         initInteractor()
+    }
+
+    private fun initRoom() {
+        val movieDao = Db.getInstance(this)?.movieDao()
+        val favDao = Db.getInstance(this)?.favoritesDao()
+        moviesRepository = MoviesRepository(movieDao, favDao)
     }
 
     private fun initInteractor() {

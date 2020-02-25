@@ -1,14 +1,13 @@
 package ru.otus.saturn33.movielist.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
+import java.util.concurrent.Executors
 
-class MovieListViewModel(message: String?) : ViewModel() {
+class MovieListViewModel(application: Application, message: String?) : AndroidViewModel(application) {
     private val errorLiveData = MutableLiveData<String?>()
     private val toastLiveData = MutableLiveData<String?>()
     private val moviesLiveData = MutableLiveData<List<MovieDTO>>()
@@ -74,8 +73,10 @@ class MovieListViewModel(message: String?) : ViewModel() {
     }
 
     fun onMovieLike(movie: MovieDTO) {
-        moviesInteractor.changeFav(movie)
-        moviesLiveData.postValue(moviesLiveData.value)
+        Executors.newSingleThreadExecutor().submit {
+            moviesInteractor.changeFav(movie)
+            moviesLiveData.postValue(moviesLiveData.value)
+        }
     }
 
     fun onRefresh() {
