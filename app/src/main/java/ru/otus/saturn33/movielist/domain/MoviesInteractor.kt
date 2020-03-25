@@ -57,6 +57,10 @@ class MoviesInteractor(
 
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)
     fun changeFav(movie: MovieDTO) = moviesRepository.changeFav(movie.id)
+    fun checkPostponed(movie: MovieDTO) = moviesRepository.isPostponed(movie.id)
+    fun setPostpone(movie: MovieDTO, date: Date) {
+        moviesRepository.setPostpone(movie.id, date)
+    }
     fun checkInChecked(movie: MovieDTO) = moviesRepository.inChecked(movie.id)
     fun addToChecked(movie: MovieDTO) = moviesRepository.addToChecked(movie.id)
     fun getCurrentPage() = moviesRepository.page

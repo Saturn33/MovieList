@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
+import java.util.*
 import java.util.concurrent.Executors
 
 class MovieListViewModel(application: Application, message: String?) : AndroidViewModel(application) {
@@ -54,6 +55,9 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     private fun addInfo(movies: List<MovieDTO>): List<MovieDTO> {
         for (movie in movies) {
             movie.inFav = moviesInteractor.checkInFav(movie)
+            val postponeInfo = moviesInteractor.checkPostponed(movie)
+            movie.postponed = postponeInfo.first
+            movie.postponeMillis = postponeInfo.second
             movie.checked = moviesInteractor.checkInChecked(movie)
             movie.imageURL =
                 if (movie.imagePath == null) null else "${moviesInteractor.getBaseImageURL()}${movie.imagePath}"
@@ -75,6 +79,13 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     fun onMovieLike(movie: MovieDTO) {
         Executors.newSingleThreadExecutor().submit {
             moviesInteractor.changeFav(movie)
+            moviesLiveData.postValue(moviesLiveData.value)
+        }
+    }
+
+    fun onMoviePostpone(movie: MovieDTO, date: Date) {
+        Executors.newSingleThreadExecutor().submit {
+            moviesInteractor.setPostpone(movie, date)
             moviesLiveData.postValue(moviesLiveData.value)
         }
     }

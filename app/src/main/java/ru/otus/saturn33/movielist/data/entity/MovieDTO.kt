@@ -22,6 +22,8 @@ data class MovieDTO(
     val imagePath: String? = null,
 
     var inFav: Boolean = false,
+    var postponed: Boolean = false,
+    var postponeMillis: Long?,
     var checked: Boolean = false,
     var imageURL: String? = null
 ) : Parcelable

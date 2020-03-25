@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.presentation.view.fragment
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -25,6 +26,7 @@ import ru.otus.saturn33.movielist.presentation.decoration.CustomDecoration
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
+import java.util.*
 
 class MovieListFragment : Fragment() {
 
@@ -171,6 +173,20 @@ class MovieListFragment : Fragment() {
                         Snackbar.LENGTH_LONG
                     ).setAction(context?.getString(R.string.cancel)) {
                         viewModel?.onMovieLike(item)
+                    }.show()
+                }
+                postponeListener = { item, _ ->
+                    DatePickerDialog(view.context).apply {
+                        item.postponeMillis?.let {
+                            val cal = Calendar.getInstance()
+                            cal.timeInMillis = it
+                            updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+                        }
+                        setOnDateSetListener { _, year, month, dayOfMonth ->
+                            val cal = Calendar.getInstance()
+                            cal.set(year, month, dayOfMonth, 10, 0, 0)
+                            viewModel?.onMoviePostpone(item, cal.time)
+                        }
                     }.show()
                 }
             }

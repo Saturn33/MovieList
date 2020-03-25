@@ -16,6 +16,7 @@ class MovieListAdapter(
 
     var tapListener: ((MovieDTO, position: Int) -> Unit)? = null
     var favListener: ((MovieDTO, position: Int) -> Unit)? = null
+    var postponeListener: ((MovieDTO, position: Int) -> Unit)? = null
     val items : MutableList<MovieDTO> = mutableListOf()
 
     fun setItems(movies: List<MovieDTO>) {
@@ -39,7 +40,7 @@ class MovieListAdapter(
                     R.layout.item_movie_list,
                     parent,
                     false
-                ), tapListener, favListener
+                ), tapListener, favListener, postponeListener
             )
             VIEW_TYPE_FOOTER -> MovieListFooterViewHolder(
                 inflater.inflate(
