@@ -17,6 +17,7 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
 import ru.otus.saturn33.movielist.presentation.adapter.PostponedListAdapter
+import ru.otus.saturn33.movielist.presentation.dialog.PostponeHelper
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 import java.util.*
@@ -86,22 +87,7 @@ class MoviePostponedFragment : Fragment() {
                     }.show()
                 }
                 postponeListener = { item, _ ->
-                    DatePickerDialog(view.context).apply {
-                        item.postponeMillis?.let {
-                            val cal = Calendar.getInstance()
-                            cal.timeInMillis = it
-                            updateDate(
-                                cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(
-                                    Calendar.DAY_OF_MONTH
-                                )
-                            )
-                        }
-                        setOnDateSetListener { _, year, month, dayOfMonth ->
-                            val cal = Calendar.getInstance()
-                            cal.set(year, month, dayOfMonth, 10, 0, 0) // 10 утра - хорошее время для просмотра фильмов!
-                            viewModel?.onMoviePostpone(item, cal.time)
-                        }
-                    }.show()
+                    PostponeHelper.selectDate(view, item, viewModel)
                 }
             }
 
