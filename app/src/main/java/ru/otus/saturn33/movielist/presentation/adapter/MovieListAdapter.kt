@@ -9,7 +9,7 @@ import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.viewholder.MovieListFooterViewHolder
 import ru.otus.saturn33.movielist.presentation.viewholder.MovieListItemViewHolder
 
-class MovieListAdapter(
+open class MovieListAdapter(
     private val inflater: LayoutInflater,
     private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

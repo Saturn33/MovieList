@@ -21,10 +21,12 @@ import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
+import ru.otus.saturn33.movielist.presentation.view.fragment.MoviePostponedFragment
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListener,
     MovieFavoritesFragment.OnDetailedClickListener,
+    MoviePostponedFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
@@ -189,6 +191,14 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
             .commit()
     }
 
+    private fun openPostponed() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, MoviePostponedFragment(), MoviePostponedFragment.TAG)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .commit()
+    }
+
     private fun openList() {
         supportFragmentManager
             .beginTransaction()
@@ -201,6 +211,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         when (item.itemId) {
             R.id.nav_list -> openList()
             R.id.nav_favorite -> openFavorites()
+            R.id.nav_postpone -> openPostponed()
         }
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)

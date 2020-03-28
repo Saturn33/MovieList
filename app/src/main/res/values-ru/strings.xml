@@ -37,4 +37,6 @@
     <string name="notification_channel_description">Напоминание о просмотре отложенного фильма</string>
     <string name="title_reminder">Пора смотреть!</string>
     <string name="time_to_watch">Пора смотреть фильм</string>
+    <string name="nav_postponed">Посмотреть позже</string>
+    <string name="title_postponed">Отложенные</string>
 </resources>

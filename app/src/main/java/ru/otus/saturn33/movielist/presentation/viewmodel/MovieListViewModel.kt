@@ -34,6 +34,9 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     val moviesFav: LiveData<List<MovieDTO>>
         get() = Transformations.map(moviesLiveData, ::filterFav)
 
+    val moviesPostponed: LiveData<List<MovieDTO>>
+        get() = Transformations.map(moviesLiveData, ::filterPostponed)
+
     val selectedMovie: LiveData<MovieDTO>
         get() = selectedMovieLiveData
 
@@ -42,9 +45,6 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
 
     val lastSeenPosition: LiveData<Int>
         get() = lastSeenPositionLiveData
-
-    val inUpdate: LiveData<Boolean>
-        get() = inUpdateLiveData
 
     val isFirstAdd: LiveData<Boolean>
         get() = isFirstAddLiveData
@@ -68,6 +68,10 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
 
     private fun filterFav(movies: List<MovieDTO>): List<MovieDTO> {
         return addInfo(movies).filter { it.inFav }
+    }
+
+    private fun filterPostponed(movies: List<MovieDTO>): List<MovieDTO> {
+        return addInfo(movies).filter { it.postponed }
     }
 
     fun onMovieSelect(movie: MovieDTO) {

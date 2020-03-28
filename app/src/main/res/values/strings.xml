@@ -37,4 +37,6 @@
     <string name="notification_channel_description">Postponed movie reminder</string>
     <string name="title_reminder">Postpone reminder</string>
     <string name="time_to_watch">It\'s a time to watch</string>
+    <string name="nav_postponed">Postponed</string>
+    <string name="title_postponed">Postponed</string>
 </resources>
