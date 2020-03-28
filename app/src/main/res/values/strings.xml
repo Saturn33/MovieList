@@ -33,4 +33,8 @@
     <string name="retry">Retry</string>
     <string name="factory_message">test factory message</string>
     <string name="postpone">Postpone watching</string>
+    <string name="notification_channel_name">Postponed movie reminder</string>
+    <string name="notification_channel_description">Postponed movie reminder</string>
+    <string name="title_reminder">Postpone reminder</string>
+    <string name="time_to_watch">It\'s a time to watch</string>
 </resources>

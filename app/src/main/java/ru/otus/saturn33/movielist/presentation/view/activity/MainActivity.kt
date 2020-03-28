@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.presentation.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +17,7 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
+import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
@@ -63,6 +65,23 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         }
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkIntent(intent)
+    }
+
+    private fun checkIntent(intent: Intent?) {
+        intent?.let {
+            when (it.action) {
+                NotificationHelper.POSTPONE_REQUEST_ACTION -> {
+                    val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.POSTPONE_EXTRA_MOVIE)
+                    openList()
+                    openDetailed(movie)
+                }
+            }
+        }
     }
 
     private fun initDrawer(toolbar: Toolbar) {
