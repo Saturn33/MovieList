@@ -2,6 +2,7 @@ package ru.otus.saturn33.movielist.presentation.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
 
     private fun setThemeCycle() {
         themeMode =
@@ -47,6 +50,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config)
+
         if (savedInstanceState == null) {
             AppCompatDelegate.setDefaultNightMode(themeMode)
         } else {
@@ -66,7 +72,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            openList()
+            checkConfig()
         }
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
@@ -77,17 +83,45 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         checkIntent(intent)
     }
 
-    private fun checkIntent(intent: Intent?) {
+    private fun checkConfig() {
+        mFirebaseRemoteConfig.fetch(3).addOnCompleteListener { taskFetch ->
+            if (taskFetch.isSuccessful) {
+                mFirebaseRemoteConfig.activate().addOnCompleteListener { taskActivation ->
+                    if (taskActivation.isSuccessful) {
+                        val startScreen = mFirebaseRemoteConfig.getString("starting_screen")
+                        Log.d("REMOTE!", startScreen)
+                        when (startScreen) {
+                            "favorites" -> {
+                                openList()
+                                openFavorites()
+                            }
+                            "postponed" -> {
+                                openList()
+                                openPostponed()
+                            }
+                            "list" -> openList()
+                            else -> openList()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkIntent(intent: Intent?): Boolean {
         intent?.let {
-            when (it.action) {
+            return when (it.action) {
                 NotificationHelper.POSTPONE_REQUEST_ACTION,
                 NotificationHelper.DETAILED_REQUEST_ACTION -> {
                     val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.EXTRA_MOVIE)
                     openList()
                     openDetailed(movie)
+                    true
                 }
+                else -> false
             }
         }
+        return false
     }
 
     private fun initDrawer(toolbar: Toolbar) {
