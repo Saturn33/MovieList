@@ -39,4 +39,5 @@
     <string name="time_to_watch">It\'s a time to watch</string>
     <string name="nav_postponed">Postponed</string>
     <string name="title_postponed">Postponed</string>
+    <string name="make_exception">Exception</string>
 </resources>

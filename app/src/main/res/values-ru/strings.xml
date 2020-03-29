@@ -39,4 +39,5 @@
     <string name="time_to_watch">Пора смотреть фильм</string>
     <string name="nav_postponed">Посмотреть позже</string>
     <string name="title_postponed">Отложенные</string>
+    <string name="make_exception">Ошибка</string>
 </resources>

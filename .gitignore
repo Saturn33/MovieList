@@ -6,6 +6,7 @@ build/
 !**/src/main/**
 !**/src/test/**
 /local.properties
+google-services.json
 
 ### STS ###
 .apt_generated
