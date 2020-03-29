@@ -30,7 +30,8 @@ class App : Application() {
     private fun initRoom() {
         val movieDao = Db.getInstance(this)?.movieDao()
         val favDao = Db.getInstance(this)?.favoritesDao()
-        moviesRepository = MoviesRepository(movieDao, favDao)
+        val postponeDao = Db.getInstance(this)?.postponeDao()
+        moviesRepository = MoviesRepository(movieDao, favDao, postponeDao)
     }
 
     private fun initInteractor() {

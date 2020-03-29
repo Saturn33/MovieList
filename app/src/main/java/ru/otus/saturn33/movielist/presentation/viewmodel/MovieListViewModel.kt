@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
+import java.util.*
 import java.util.concurrent.Executors
 
 class MovieListViewModel(application: Application, message: String?) : AndroidViewModel(application) {
@@ -33,6 +34,9 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     val moviesFav: LiveData<List<MovieDTO>>
         get() = Transformations.map(moviesLiveData, ::filterFav)
 
+    val moviesPostponed: LiveData<List<MovieDTO>>
+        get() = Transformations.map(moviesLiveData, ::filterPostponed)
+
     val selectedMovie: LiveData<MovieDTO>
         get() = selectedMovieLiveData
 
@@ -41,9 +45,6 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
 
     val lastSeenPosition: LiveData<Int>
         get() = lastSeenPositionLiveData
-
-    val inUpdate: LiveData<Boolean>
-        get() = inUpdateLiveData
 
     val isFirstAdd: LiveData<Boolean>
         get() = isFirstAddLiveData
@@ -54,6 +55,9 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     private fun addInfo(movies: List<MovieDTO>): List<MovieDTO> {
         for (movie in movies) {
             movie.inFav = moviesInteractor.checkInFav(movie)
+            val postponeInfo = moviesInteractor.checkPostponed(movie)
+            movie.postponed = postponeInfo.first
+            movie.postponeMillis = postponeInfo.second
             movie.checked = moviesInteractor.checkInChecked(movie)
             movie.imageURL =
                 if (movie.imagePath == null) null else "${moviesInteractor.getBaseImageURL()}${movie.imagePath}"
@@ -66,6 +70,10 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
         return addInfo(movies).filter { it.inFav }
     }
 
+    private fun filterPostponed(movies: List<MovieDTO>): List<MovieDTO> {
+        return addInfo(movies).filter { it.postponed }
+    }
+
     fun onMovieSelect(movie: MovieDTO) {
         moviesInteractor.addToChecked(movie)
         moviesLiveData.postValue(moviesLiveData.value)
@@ -75,6 +83,13 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     fun onMovieLike(movie: MovieDTO) {
         Executors.newSingleThreadExecutor().submit {
             moviesInteractor.changeFav(movie)
+            moviesLiveData.postValue(moviesLiveData.value)
+        }
+    }
+
+    fun onMoviePostpone(movie: MovieDTO, date: Date) {
+        Executors.newSingleThreadExecutor().submit {
+            moviesInteractor.setPostpone(movie, date)
             moviesLiveData.postValue(moviesLiveData.value)
         }
     }

@@ -2,16 +2,15 @@ package ru.otus.saturn33.movielist.data.repository
 
 import android.content.Context
 import ru.otus.saturn33.movielist.App
-import ru.otus.saturn33.movielist.data.entity.FavDAO
-import ru.otus.saturn33.movielist.data.entity.FavDTO
-import ru.otus.saturn33.movielist.data.entity.MovieDAO
-import ru.otus.saturn33.movielist.data.entity.MovieDTO
+import ru.otus.saturn33.movielist.data.entity.*
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.collections.HashMap
 
-class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: FavDAO?) {
+class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: FavDAO?, private val postponeDao: PostponeDAO?) {
     private val favMovies: MutableSet<Int> = mutableSetOf()
     private val checkedMovies: MutableSet<Int> = mutableSetOf()
+    private val postponedMovies: HashMap<Int, Long> = HashMap()
     private val pref = App.instance!!.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE)
 
     var page = 0
@@ -50,12 +49,19 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
         }
     }
 
+    fun isPostponed(id: Int): Pair<Boolean, Long?> = (System.currentTimeMillis() < postponedMovies[id] ?: 0) to postponedMovies[id]
+    fun setPostpone(id: Int, date: Date) {
+        postponedMovies[id] = date.time
+        postponeDao?.add(PostponeDTO(id, date.time))
+    }
+
     fun inChecked(id: Int) = checkedMovies.contains(id)
     fun addToChecked(id: Int) = checkedMovies.add(id)
 
     init {
         Executors.newSingleThreadExecutor().submit {
             favDao?.getAll()?.forEach { favMovies.add(it.movieId) }
+            postponeDao?.getAll()?.forEach { postponedMovies[it.movieId] = it.date }
         }
     }
 

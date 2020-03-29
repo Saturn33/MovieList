@@ -12,6 +12,7 @@ import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOV
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOVIES_LAST_ACCESS
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.SHARED_NAME
 import ru.otus.saturn33.movielist.data.service.MovieDBService
+import ru.otus.saturn33.movielist.presentation.scheduler.AlarmHelper
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -57,6 +58,11 @@ class MoviesInteractor(
 
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)
     fun changeFav(movie: MovieDTO) = moviesRepository.changeFav(movie.id)
+    fun checkPostponed(movie: MovieDTO) = moviesRepository.isPostponed(movie.id)
+    fun setPostpone(movie: MovieDTO, date: Date) {
+        moviesRepository.setPostpone(movie.id, date)
+        AlarmHelper.addPostponeMovieAlarm(App.instance?.applicationContext!!, movie, date)
+    }
     fun checkInChecked(movie: MovieDTO) = moviesRepository.inChecked(movie.id)
     fun addToChecked(movie: MovieDTO) = moviesRepository.addToChecked(movie.id)
     fun getCurrentPage() = moviesRepository.page

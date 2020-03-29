@@ -54,6 +54,17 @@
 
     <ImageView
 
+        android:id="@+id/postponeIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_mid"
+        android:contentDescription="@string/postpone"
+        android:src="@drawable/postpone_no"
+        app:layout_constraintBottom_toTopOf="@id/inFavIv"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+
         android:id="@+id/inFavIv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

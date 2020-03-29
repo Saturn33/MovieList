@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.presentation.view.fragment
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -22,9 +23,11 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
 import ru.otus.saturn33.movielist.presentation.decoration.CustomDecoration
+import ru.otus.saturn33.movielist.presentation.dialog.PostponeHelper
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
+import java.util.*
 
 class MovieListFragment : Fragment() {
 
@@ -172,6 +175,9 @@ class MovieListFragment : Fragment() {
                     ).setAction(context?.getString(R.string.cancel)) {
                         viewModel?.onMovieLike(item)
                     }.show()
+                }
+                postponeListener = { item, _ ->
+                    PostponeHelper.selectDate(view, item, viewModel)
                 }
             }
 

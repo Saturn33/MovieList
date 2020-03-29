@@ -9,13 +9,14 @@ import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.viewholder.MovieListFooterViewHolder
 import ru.otus.saturn33.movielist.presentation.viewholder.MovieListItemViewHolder
 
-class MovieListAdapter(
+open class MovieListAdapter(
     private val inflater: LayoutInflater,
     private val colors: Pair<Int, Int>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var tapListener: ((MovieDTO, position: Int) -> Unit)? = null
     var favListener: ((MovieDTO, position: Int) -> Unit)? = null
+    var postponeListener: ((MovieDTO, position: Int) -> Unit)? = null
     val items : MutableList<MovieDTO> = mutableListOf()
 
     fun setItems(movies: List<MovieDTO>) {
@@ -39,7 +40,7 @@ class MovieListAdapter(
                     R.layout.item_movie_list,
                     parent,
                     false
-                ), tapListener, favListener
+                ), tapListener, favListener, postponeListener
             )
             VIEW_TYPE_FOOTER -> MovieListFooterViewHolder(
                 inflater.inflate(

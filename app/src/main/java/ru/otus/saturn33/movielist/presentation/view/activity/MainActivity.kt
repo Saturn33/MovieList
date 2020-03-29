@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.presentation.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,13 +17,16 @@ import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
+import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
+import ru.otus.saturn33.movielist.presentation.view.fragment.MoviePostponedFragment
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListener,
     MovieFavoritesFragment.OnDetailedClickListener,
+    MoviePostponedFragment.OnDetailedClickListener,
     NavigationView.OnNavigationItemSelectedListener,
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
@@ -63,6 +67,23 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         }
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkIntent(intent)
+    }
+
+    private fun checkIntent(intent: Intent?) {
+        intent?.let {
+            when (it.action) {
+                NotificationHelper.POSTPONE_REQUEST_ACTION -> {
+                    val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.POSTPONE_EXTRA_MOVIE)
+                    openList()
+                    openDetailed(movie)
+                }
+            }
+        }
     }
 
     private fun initDrawer(toolbar: Toolbar) {
@@ -170,6 +191,14 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
             .commit()
     }
 
+    private fun openPostponed() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, MoviePostponedFragment(), MoviePostponedFragment.TAG)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .commit()
+    }
+
     private fun openList() {
         supportFragmentManager
             .beginTransaction()
@@ -182,6 +211,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         when (item.itemId) {
             R.id.nav_list -> openList()
             R.id.nav_favorite -> openFavorites()
+            R.id.nav_postpone -> openPostponed()
         }
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
