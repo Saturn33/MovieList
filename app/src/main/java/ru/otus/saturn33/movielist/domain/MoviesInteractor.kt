@@ -56,6 +56,12 @@ class MoviesInteractor(
         }
     }
 
+    fun getExact(movieId: Int): MovieDTO? {
+        val movie = moviesRepository.getExact(movieId) ?: return null
+        movie.imageURL = if (movie.imagePath == null) null else "${getBaseImageURL()}${movie.imagePath}"
+        return movie
+    }
+
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)
     fun changeFav(movie: MovieDTO) = moviesRepository.changeFav(movie.id)
     fun checkPostponed(movie: MovieDTO) = moviesRepository.isPostponed(movie.id)

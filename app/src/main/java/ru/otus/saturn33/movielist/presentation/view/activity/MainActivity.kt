@@ -80,8 +80,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     private fun checkIntent(intent: Intent?) {
         intent?.let {
             when (it.action) {
-                NotificationHelper.POSTPONE_REQUEST_ACTION -> {
-                    val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.POSTPONE_EXTRA_MOVIE)
+                NotificationHelper.POSTPONE_REQUEST_ACTION,
+                NotificationHelper.DETAILED_REQUEST_ACTION -> {
+                    val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.EXTRA_MOVIE)
                     openList()
                     openDetailed(movie)
                 }
