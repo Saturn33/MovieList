@@ -62,6 +62,10 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         actionBarProvider?.changeTitle(getString(R.string.movie_list))
 
+        view.findViewById<TextView>(R.id.make_error).setOnClickListener {
+            throw ArrayIndexOutOfBoundsException(5)
+        }
+
         view.findViewById<TextView>(R.id.invite).setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND

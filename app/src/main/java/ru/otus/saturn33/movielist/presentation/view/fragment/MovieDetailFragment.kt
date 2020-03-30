@@ -12,9 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
+import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
 
 class MovieDetailFragment : Fragment() {
     private var viewModel: MovieListViewModel? = null
@@ -36,7 +38,9 @@ class MovieDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = activity?.let {
-            ViewModelProvider(it).get(MovieListViewModel::class.java)
+            ViewModelProvider(it, MovieListViewModelFactory(App.instance!!, null)).get(
+                MovieListViewModel::class.java
+            )
         }
         viewModel?.selectedMovie?.observe(this.viewLifecycleOwner, Observer<MovieDTO> {
             showMovieData(view, it)

@@ -1,6 +1,8 @@
 package ru.otus.saturn33.movielist
 
 import android.app.Application
+import android.util.Log
+import com.google.firebase.iid.FirebaseInstanceId
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,6 +12,7 @@ import ru.otus.saturn33.movielist.data.network.LoggerInterceptor
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository
 import ru.otus.saturn33.movielist.data.service.MovieDBService
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
+import ru.otus.saturn33.movielist.service.FirebaseMessageService
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -25,6 +28,13 @@ class App : Application() {
         initRetrofit()
         initRoom()
         initInteractor()
+        initFCM()
+    }
+
+    private fun initFCM() {
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+            Log.d(FirebaseMessageService.TAG, "Current token: ${it.token}")
+        }
     }
 
     private fun initRoom() {

@@ -33,10 +33,15 @@
     <string name="retry">Повторить</string>
     <string name="factory_message">тестовое сообщение из фабрики</string>
     <string name="postpone">Отложить просмотр</string>
-    <string name="notification_channel_name">Напоминание о просмотре</string>
-    <string name="notification_channel_description">Напоминание о просмотре отложенного фильма</string>
+    <string name="postpone_notification_channel_name">Напоминание о просмотре</string>
+    <string name="postpone_notification_channel_description">Напоминание о просмотре отложенного фильма</string>
     <string name="title_reminder">Пора смотреть!</string>
     <string name="time_to_watch">Пора смотреть фильм</string>
     <string name="nav_postponed">Посмотреть позже</string>
     <string name="title_postponed">Отложенные</string>
+    <string name="make_exception">Ошибка</string>
+    <string name="detailed_notification_channel_name">Информация о фильме</string>
+    <string name="detailed_notification_channel_description">Уведомление об информации о фильме</string>
+    <string name="title_detailed">Новый фильм</string>
+    <string name="text_detailed">Рекомендуем посмотреть фильм</string>
 </resources>

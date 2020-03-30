@@ -18,6 +18,8 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
     val cachedMovies: List<MovieDTO>
         get() = moviesDao?.getAll() ?: listOf()
 
+    fun getExact(movieId: Int) = moviesDao?.read(movieId)
+
     fun addToCache(movies: List<MovieDTO>) {
         Executors.newSingleThreadExecutor().submit {
             moviesDao?.create(movies)
