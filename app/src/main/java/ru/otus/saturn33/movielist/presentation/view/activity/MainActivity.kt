@@ -16,16 +16,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper
+import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper.DETAILED_REQUEST_ACTION
+import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper.POSTPONE_REQUEST_ACTION
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieDetailFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieFavoritesFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MovieListFragment
 import ru.otus.saturn33.movielist.presentation.view.fragment.MoviePostponedFragment
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
+import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
 
 class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListener,
     MovieFavoritesFragment.OnDetailedClickListener,
@@ -71,7 +75,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null && intent?.action != DETAILED_REQUEST_ACTION && intent?.action != POSTPONE_REQUEST_ACTION) {
             checkConfig()
         }
         updateToolBar(activityToolbar)
@@ -111,8 +115,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     private fun checkIntent(intent: Intent?): Boolean {
         intent?.let {
             return when (it.action) {
-                NotificationHelper.POSTPONE_REQUEST_ACTION,
-                NotificationHelper.DETAILED_REQUEST_ACTION -> {
+                POSTPONE_REQUEST_ACTION,
+                DETAILED_REQUEST_ACTION -> {
                     val movie = it.extras?.getParcelable<MovieDTO?>(NotificationHelper.EXTRA_MOVIE)
                     openList()
                     openDetailed(movie)
@@ -212,7 +216,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
 
     private fun openDetailed(item: MovieDTO? = null) {
         if (item != null) {
-            ViewModelProvider(this).get(MovieListViewModel::class.java).onMovieSelect(item)
+            ViewModelProvider(this, MovieListViewModelFactory(App.instance!!, null)).get(
+                MovieListViewModel::class.java
+            ).onMovieSelect(item)
             val bundle = Bundle().apply {
                 putString(FirebaseAnalytics.Param.ITEM_ID, item.id.toString())
                 putString(FirebaseAnalytics.Param.ITEM_NAME, item.name)
