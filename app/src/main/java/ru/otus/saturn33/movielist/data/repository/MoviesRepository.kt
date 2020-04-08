@@ -4,7 +4,6 @@ import android.content.Context
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.*
 import java.util.*
-import java.util.concurrent.Executors
 import kotlin.collections.HashMap
 
 class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: FavDAO?, private val postponeDao: PostponeDAO?) {
@@ -21,23 +20,23 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
     fun getExact(movieId: Int) = moviesDao?.read(movieId)
 
     fun addToCache(movies: List<MovieDTO>) {
-        Executors.newSingleThreadExecutor().submit {
+//        Executors.newSingleThreadExecutor().submit {
             moviesDao?.create(movies)
             pref.edit().apply {
                 this.putLong(MOVIES_LAST_ACCESS, Date().time)
                 this.apply()
             }
-        }
+//        }
     }
 
     fun clearCache() {
-        Executors.newSingleThreadExecutor().submit {
+//        Executors.newSingleThreadExecutor().submit {
             moviesDao?.clear()
             pref.edit().apply {
                 this.remove(MOVIES_LAST_ACCESS)
                 this.apply()
             }
-        }
+//        }
     }
 
     fun inFav(id: Int) = favMovies.contains(id)
@@ -61,10 +60,10 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
     fun addToChecked(id: Int) = checkedMovies.add(id)
 
     init {
-        Executors.newSingleThreadExecutor().submit {
+//        Executors.newSingleThreadExecutor().submit {
             favDao?.getAll()?.forEach { favMovies.add(it.movieId) }
             postponeDao?.getAll()?.forEach { postponedMovies[it.movieId] = it.date }
-        }
+//        }
     }
 
     companion object {

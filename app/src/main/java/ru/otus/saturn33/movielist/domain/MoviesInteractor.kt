@@ -1,12 +1,11 @@
 package ru.otus.saturn33.movielist.domain
 
+import android.annotation.SuppressLint
 import android.content.Context
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
-import ru.otus.saturn33.movielist.data.entity.MoviesResponse
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOVIES_CACHE_TTL
 import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.MOVIES_LAST_ACCESS
@@ -14,45 +13,37 @@ import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.SHA
 import ru.otus.saturn33.movielist.data.service.MovieDBService
 import ru.otus.saturn33.movielist.presentation.scheduler.AlarmHelper
 import java.util.*
-import java.util.concurrent.Executors
 
 class MoviesInteractor(
     private val movieDBService: MovieDBService,
     private val moviesRepository: MoviesRepository
 ) {
 
+    @SuppressLint("CheckResult")
     fun getTopRatedMovies(page: Int = 1, callback: GetMoviesCallback) {
         val pref = App.instance!!.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE)
         val lastAccess = pref.getLong(MOVIES_LAST_ACCESS, 0)
         val now = Date().time
 
         if (now - lastAccess > MOVIES_CACHE_TTL) {
-            movieDBService.getTopRatedMovies(page).enqueue(object : Callback<MoviesResponse> {
-                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                    callback.onError(t.message ?: "Unknown error")
-                }
+            movieDBService.getTopRatedMovies(page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ response ->
+                    response.results?.let { moviesRepository.addToCache(it) }
+                    if (response.page > moviesRepository.page)
+                        moviesRepository.page = response.page
+//                        Executors.newSingleThreadExecutor().submit {
+                    callback.onSuccess(moviesRepository.cachedMovies)
+//                        }
 
-                override fun onResponse(
-                    call: Call<MoviesResponse>,
-                    response: Response<MoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()!!.results?.let { moviesRepository.addToCache(it) }
-                        if (response.body()!!.page > moviesRepository.page)
-                            moviesRepository.page = response.body()!!.page
-                        Executors.newSingleThreadExecutor().submit {
-                            callback.onSuccess(moviesRepository.cachedMovies)
-                        }
-                    } else {
-                        callback.onError(response.code().toString() + " " + response.errorBody())
-                    }
-                }
-
-            })
+                }, { error ->
+                    callback.onError(error.message ?: "unknown")
+                })
         } else {
-            Executors.newSingleThreadExecutor().submit {
+//            Executors.newSingleThreadExecutor().submit {
                 callback.onSuccess(moviesRepository.cachedMovies)
-            }
+//            }
         }
     }
 
