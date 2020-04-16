@@ -1,12 +1,14 @@
 package ru.otus.saturn33.movielist.presentation.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
 import java.util.*
-import java.util.concurrent.Executors
 
 class MovieListViewModel(application: Application, message: String?) : AndroidViewModel(application) {
     private val errorLiveData = MutableLiveData<String?>()
