@@ -81,17 +81,13 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     }
 
     fun onMovieLike(movie: MovieDTO) {
-//        Executors.newSingleThreadExecutor().submit {
-            moviesInteractor.changeFav(movie)
-            moviesLiveData.postValue(moviesLiveData.value)
-//        }
+        moviesInteractor.changeFav(movie)
+        moviesLiveData.postValue(moviesLiveData.value)
     }
 
     fun onMoviePostpone(movie: MovieDTO, date: Date) {
-//        Executors.newSingleThreadExecutor().submit {
-            moviesInteractor.setPostpone(movie, date)
-            moviesLiveData.postValue(moviesLiveData.value)
-//        }
+        moviesInteractor.setPostpone(movie, date)
+        moviesLiveData.postValue(moviesLiveData.value)
     }
 
     fun onRefresh() {

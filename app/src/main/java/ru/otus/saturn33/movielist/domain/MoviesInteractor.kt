@@ -2,6 +2,7 @@ package ru.otus.saturn33.movielist.domain
 
 import android.annotation.SuppressLint
 import android.content.Context
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.otus.saturn33.movielist.App
@@ -30,26 +31,35 @@ class MoviesInteractor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    response.results?.let { moviesRepository.addToCache(it) }
                     if (response.page > moviesRepository.page)
                         moviesRepository.page = response.page
-//                        Executors.newSingleThreadExecutor().submit {
-                    callback.onSuccess(moviesRepository.cachedMovies)
-//                        }
+                    response.results?.let {
+                        moviesRepository.addToCache(it)?.let { single ->
+                            single.subscribe { result ->
+                                moviesRepository.cachedMovies?. let {single ->
+                                    single
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe { data -> callback.onSuccess(data)}
+                                }
+                            }
+                        }
+                    }
+
 
                 }, { error ->
                     callback.onError(error.message ?: "unknown")
                 })
         } else {
-//            Executors.newSingleThreadExecutor().submit {
-                callback.onSuccess(moviesRepository.cachedMovies)
-//            }
+            moviesRepository.cachedMovies?.let {single ->
+                single
+                    .subscribeOn(Schedulers.io())
+                    .subscribe { data -> callback.onSuccess(data)}
+            }
         }
     }
 
-    fun getExact(movieId: Int): MovieDTO? {
+    fun getExact(movieId: Int): Single<MovieDTO?>? {
         val movie = moviesRepository.getExact(movieId) ?: return null
-        movie.imageURL = if (movie.imagePath == null) null else "${getBaseImageURL()}${movie.imagePath}"
         return movie
     }
 
