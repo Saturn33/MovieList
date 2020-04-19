@@ -1,5 +1,4 @@
 package ru.otus.saturn33.movielist.service
-/*
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -31,4 +30,3 @@ class FirebaseMessageService : FirebaseMessagingService() {
         const val TAG = "FCM!"
     }
 }
-*/

@@ -1,9 +1,8 @@
 package ru.otus.saturn33.movielist.presentation.view.activity
 
-//import com.google.firebase.analytics.FirebaseAnalytics
-//import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -15,6 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
@@ -36,8 +37,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     NavigationView.OnNavigationItemSelectedListener,
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
-//    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
-//    private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
 
     private fun setThemeCycle() {
         themeMode =
@@ -52,9 +53,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-//        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-//        mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config)
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config)
 
         if (savedInstanceState == null) {
             AppCompatDelegate.setDefaultNightMode(themeMode)
@@ -87,7 +88,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     }
 
     private fun checkConfig() {
-/*
         mFirebaseRemoteConfig.fetch(3).addOnCompleteListener { taskFetch ->
             if (taskFetch.isSuccessful) {
                 mFirebaseRemoteConfig.activate().addOnCompleteListener { taskActivation ->
@@ -110,8 +110,6 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
                 }
             }
         }
-*/
-        openList()
     }
 
     private fun checkIntent(intent: Intent?): Boolean {
@@ -221,14 +219,12 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
             ViewModelProvider(this, MovieListViewModelFactory(App.instance!!, null)).get(
                 MovieListViewModel::class.java
             ).onMovieSelect(item)
-/*
             val bundle = Bundle().apply {
                 putString(FirebaseAnalytics.Param.ITEM_ID, item.id.toString())
                 putString(FirebaseAnalytics.Param.ITEM_NAME, item.name)
                 putString(FirebaseAnalytics.Param.CONTENT_TYPE, "movie detail")
             }
             mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle)
-*/
         }
         supportFragmentManager
             .beginTransaction()
@@ -239,12 +235,10 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     }
 
     private fun openFavorites() {
-/*
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "favorites list")
         }
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
-*/
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieFavoritesFragment(), MovieFavoritesFragment.TAG)
@@ -253,12 +247,10 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     }
 
     private fun openPostponed() {
-/*
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "postponed list")
         }
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
-*/
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MoviePostponedFragment(), MoviePostponedFragment.TAG)
@@ -267,12 +259,10 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     }
 
     private fun openList() {
-/*
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "main movie list")
         }
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
-*/
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
