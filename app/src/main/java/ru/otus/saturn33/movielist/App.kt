@@ -6,6 +6,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.otus.saturn33.movielist.data.database.Db
 import ru.otus.saturn33.movielist.data.network.LoggerInterceptor
@@ -68,6 +69,7 @@ class App : Application() {
         movieDBService = Retrofit.Builder()
             .client(client)
             .baseUrl(MoviesRepository.BASE_API_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MovieDBService::class.java)

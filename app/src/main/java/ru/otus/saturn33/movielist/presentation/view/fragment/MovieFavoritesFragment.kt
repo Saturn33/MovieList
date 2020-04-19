@@ -72,10 +72,10 @@ class MovieFavoritesFragment : Fragment() {
                 LayoutInflater.from(context),
                 colorPair
             ).apply {
-                tapListener = { item, position ->
+                tapListener = { item, _ ->
                     listener?.onDetailedClick(item)
                 }
-                longListener = { item, position ->
+                longListener = { item, _ ->
                     viewModel?.onMovieLike(item)
                     Snackbar.make(
                         recyclerView,

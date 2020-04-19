@@ -1,10 +1,11 @@
 package ru.otus.saturn33.movielist.data.repository
 
 import android.content.Context
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.*
 import java.util.*
-import java.util.concurrent.Executors
 import kotlin.collections.HashMap
 
 class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: FavDAO?, private val postponeDao: PostponeDAO?) {
@@ -15,28 +16,39 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
 
     var page = 0
 
-    val cachedMovies: List<MovieDTO>
-        get() = moviesDao?.getAll() ?: listOf()
+    val cachedMovies: Single<List<MovieDTO>>?
+        get() = moviesDao?.getAll()
 
     fun getExact(movieId: Int) = moviesDao?.read(movieId)
 
-    fun addToCache(movies: List<MovieDTO>) {
-        Executors.newSingleThreadExecutor().submit {
-            moviesDao?.create(movies)
-            pref.edit().apply {
-                this.putLong(MOVIES_LAST_ACCESS, Date().time)
-                this.apply()
-            }
+    fun addToCache(movies: List<MovieDTO>): Single<List<Long>?>? {
+        moviesDao?.let { dao ->
+            val single = dao
+                .create(movies)
+                .subscribeOn(Schedulers.io())
+            single
+                .subscribe { _ ->
+                    pref.edit().apply {
+                        this.putLong(MOVIES_LAST_ACCESS, Date().time)
+                        this.apply()
+                    }
+                }
+            return single
         }
+        return null
     }
 
     fun clearCache() {
-        Executors.newSingleThreadExecutor().submit {
-            moviesDao?.clear()
-            pref.edit().apply {
-                this.remove(MOVIES_LAST_ACCESS)
-                this.apply()
-            }
+        moviesDao?.let { dao ->
+            dao
+                .clear()
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    pref.edit().apply {
+                        this.remove(MOVIES_LAST_ACCESS)
+                        this.apply()
+                    }
+                }
         }
     }
 
@@ -61,9 +73,23 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
     fun addToChecked(id: Int) = checkedMovies.add(id)
 
     init {
-        Executors.newSingleThreadExecutor().submit {
-            favDao?.getAll()?.forEach { favMovies.add(it.movieId) }
-            postponeDao?.getAll()?.forEach { postponedMovies[it.movieId] = it.date }
+        favDao?.let { dao ->
+            dao
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .subscribe { data ->
+                    data.forEach { favMovies.add(it.movieId) }
+                }
+        }
+
+
+        postponeDao?.let { dao ->
+            dao
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .subscribe { data ->
+                    data.forEach { postponedMovies[it.movieId] = it.date }
+                }
         }
     }
 

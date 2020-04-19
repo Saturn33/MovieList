@@ -14,7 +14,7 @@ object Db {
                     context,
                     MoviesDatabase::class.java, "movies.db"
                 )
-                    /*.allowMainThreadQueries()*/
+//                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build()
             }
