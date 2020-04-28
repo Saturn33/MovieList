@@ -3,77 +3,39 @@ package ru.otus.saturn33.movielist
 import android.app.Application
 import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
-import ru.otus.saturn33.movielist.data.database.Db
-import ru.otus.saturn33.movielist.data.network.LoggerInterceptor
-import ru.otus.saturn33.movielist.data.repository.MoviesRepository
-import ru.otus.saturn33.movielist.data.service.MovieDBService
-import ru.otus.saturn33.movielist.domain.MoviesInteractor
+import ru.otus.saturn33.movielist.di.component.AppComponent
+import ru.otus.saturn33.movielist.di.component.DaggerAppComponent
+import ru.otus.saturn33.movielist.di.module.AppModule
+import ru.otus.saturn33.movielist.di.module.DBModule
+import ru.otus.saturn33.movielist.di.module.NetModule
 import ru.otus.saturn33.movielist.service.FirebaseMessageService
-import java.util.concurrent.TimeUnit
 
 class App : Application() {
-    lateinit var movieDBService: MovieDBService
-    lateinit var moviesInteractor: MoviesInteractor
-    lateinit var moviesRepository: MoviesRepository
+
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
 
         instance = this
 
-        initRetrofit()
-        initRoom()
-        initInteractor()
+        initDI()
         initFCM()
+    }
+
+    private fun initDI() {
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .netModule(NetModule())
+            .dBModule(DBModule(this))
+            .build()
+        appComponent.inject(this)
     }
 
     private fun initFCM() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             Log.d(FirebaseMessageService.TAG, "Current token: ${it.token}")
         }
-    }
-
-    private fun initRoom() {
-        val movieDao = Db.getInstance(this)?.movieDao()
-        val favDao = Db.getInstance(this)?.favoritesDao()
-        val postponeDao = Db.getInstance(this)?.postponeDao()
-        moviesRepository = MoviesRepository(movieDao, favDao, postponeDao)
-    }
-
-    private fun initInteractor() {
-        moviesInteractor = MoviesInteractor(movieDBService, moviesRepository)
-    }
-
-    private fun initRetrofit() {
-        val interceptor = HttpLoggingInterceptor(LoggerInterceptor()).apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        val client = OkHttpClient.Builder()
-            .connectTimeout(2, TimeUnit.SECONDS)
-            .addInterceptor { chain ->
-                chain.proceed(
-                    chain.request()
-                        .newBuilder()
-                        .addHeader("Authorization", "Bearer ${MoviesRepository.API_TOKEN}")
-                        .build()
-                )
-            }
-            .addInterceptor(interceptor)
-            .build()
-
-        movieDBService = Retrofit.Builder()
-            .client(client)
-            .baseUrl(MoviesRepository.BASE_API_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(MovieDBService::class.java)
-
     }
 
     companion object {
