@@ -12,6 +12,11 @@ import javax.inject.Inject
 class FirebaseMessageService : FirebaseMessagingService() {
     @Inject
     lateinit var moviesInteractor: MoviesInteractor
+
+    init {
+        App.instance!!.appComponent.inject(this)
+    }
+
     override fun onNewToken(token: String) {
         Log.d(TAG, "New token: $token")
         println(token)

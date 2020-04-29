@@ -13,19 +13,24 @@ import ru.otus.saturn33.movielist.data.repository.MoviesRepository
 import javax.inject.Singleton
 
 @Module
-class DBModule(app: Application) {
-    private val db: MoviesDatabase = Room.databaseBuilder(
-        app,
-        MoviesDatabase::class.java, "movies.db"
-    )
-//                    .allowMainThreadQueries()
-        .fallbackToDestructiveMigration()
-        .build()
+class DBModule(val app: Application) {
+    var db: MoviesDatabase? = null
 
     @Singleton
     @Provides
     fun provideRoomDatabase(): MoviesDatabase {
-        return db
+        if (db == null) {
+            synchronized(MoviesDatabase::class) {
+                db = Room.databaseBuilder(
+                    app,
+                    MoviesDatabase::class.java, "movies.db"
+                )
+//                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build()
+            }
+        }
+        return db!!
     }
 
     @Singleton

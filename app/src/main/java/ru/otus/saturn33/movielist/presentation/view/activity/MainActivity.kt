@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
@@ -216,7 +215,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
 
     private fun openDetailed(item: MovieDTO? = null) {
         if (item != null) {
-            ViewModelProvider(this, MovieListViewModelFactory(App.instance!!, null)).get(
+            ViewModelProvider(this, MovieListViewModelFactory()).get(
                 MovieListViewModel::class.java
             ).onMovieSelect(item)
             val bundle = Bundle().apply {

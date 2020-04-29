@@ -5,13 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.domain.MoviesInteractor
 import java.util.*
-import javax.inject.Inject
 
-class MovieListViewModel(application: Application, message: String?) : AndroidViewModel(application) {
+class MovieListViewModel(application: Application, private val moviesInteractor: MoviesInteractor) : AndroidViewModel(application) {
     private val errorLiveData = MutableLiveData<String?>()
     private val toastLiveData = MutableLiveData<String?>()
     private val moviesLiveData = MutableLiveData<List<MovieDTO>>()
@@ -20,15 +18,6 @@ class MovieListViewModel(application: Application, message: String?) : AndroidVi
     private val lastSeenPositionLiveData: MutableLiveData<Int> = MutableLiveData(0)
     private val inUpdateLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     private val isFirstAddLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-    @Inject
-    lateinit var moviesInteractor: MoviesInteractor
-
-    init {
-        App.instance!!.appComponent.inject(this)
-        if (message != null) {
-            toastLiveData.postValue(message)
-        }
-    }
 
     val error: LiveData<String?>
         get() = errorLiveData
