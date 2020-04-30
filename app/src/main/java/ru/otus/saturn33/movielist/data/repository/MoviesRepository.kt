@@ -56,9 +56,13 @@ class MoviesRepository @Inject constructor(private val moviesDao: MovieDAO, priv
         if (favMovies.contains(id)) {
             favMovies.remove(id)
             favDao.delete(FavDTO(id))
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         } else {
             favMovies.add(id)
             favDao.add(FavDTO(id))
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         }
     }
 
@@ -66,6 +70,8 @@ class MoviesRepository @Inject constructor(private val moviesDao: MovieDAO, priv
     fun setPostpone(id: Int, date: Date) {
         postponedMovies[id] = date.time
         postponeDao.add(PostponeDTO(id, date.time))
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     fun inChecked(id: Int) = checkedMovies.contains(id)
