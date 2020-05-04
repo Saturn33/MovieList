@@ -14,11 +14,16 @@ import ru.otus.saturn33.movielist.data.repository.MoviesRepository.Companion.SHA
 import ru.otus.saturn33.movielist.data.service.MovieDBService
 import ru.otus.saturn33.movielist.presentation.scheduler.AlarmHelper
 import java.util.*
+import javax.inject.Inject
 
-class MoviesInteractor(
-    private val movieDBService: MovieDBService,
-    private val moviesRepository: MoviesRepository
-) {
+class MoviesInteractor @Inject constructor(): IMoviesInteractor {
+    init {
+        App.instance!!.appComponent.inject(this)
+    }
+    @Inject
+    lateinit var movieDBService: MovieDBService
+    @Inject
+    lateinit var moviesRepository: MoviesRepository
 
     @SuppressLint("CheckResult")
     fun getTopRatedMovies(page: Int = 1, callback: GetMoviesCallback) {
@@ -35,7 +40,7 @@ class MoviesInteractor(
                         moviesRepository.page = response.page
                     response.results?.let {
                         moviesRepository.addToCache(it)?.let { single ->
-                            single.subscribe { result ->
+                            single.subscribe { _ ->
                                 moviesRepository.cachedMovies?. let {single ->
                                     single
                                         .subscribeOn(Schedulers.io())
@@ -59,8 +64,7 @@ class MoviesInteractor(
     }
 
     fun getExact(movieId: Int): Single<MovieDTO?>? {
-        val movie = moviesRepository.getExact(movieId) ?: return null
-        return movie
+        return moviesRepository.getExact(movieId)
     }
 
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)

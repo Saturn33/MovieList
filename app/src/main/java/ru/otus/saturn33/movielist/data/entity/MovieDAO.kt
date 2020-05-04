@@ -28,7 +28,7 @@ interface MovieDAO {
     fun clear(): Completable
 
     @Query("SELECT * FROM movies WHERE id = :id")
-    fun read(id: Int): Single<MovieDTO?>
+    fun read(id: Int): Single<MovieDTO?>?
 
     @Query("SELECT * FROM movies WHERE id IN (:ids)")
     fun read(ids: List<Int>): Single<List<MovieDTO>>

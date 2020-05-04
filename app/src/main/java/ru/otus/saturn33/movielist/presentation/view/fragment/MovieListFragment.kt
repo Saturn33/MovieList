@@ -1,6 +1,5 @@
 package ru.otus.saturn33.movielist.presentation.view.fragment
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
-import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.adapter.MovieListAdapter
@@ -27,7 +25,6 @@ import ru.otus.saturn33.movielist.presentation.dialog.PostponeHelper
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModel
 import ru.otus.saturn33.movielist.presentation.viewmodel.MovieListViewModelFactory
-import java.util.*
 
 class MovieListFragment : Fragment() {
 
@@ -78,7 +75,7 @@ class MovieListFragment : Fragment() {
         }
 
         viewModel = activity?.let {
-            ViewModelProvider(it, MovieListViewModelFactory(App.instance!!, null)).get(
+            ViewModelProvider(it, MovieListViewModelFactory()).get(
                 MovieListViewModel::class.java
             )
         }

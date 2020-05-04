@@ -1,14 +1,16 @@
 package ru.otus.saturn33.movielist.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.otus.saturn33.movielist.App
 import ru.otus.saturn33.movielist.data.entity.*
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
-class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: FavDAO?, private val postponeDao: PostponeDAO?) {
+class MoviesRepository @Inject constructor(private val moviesDao: MovieDAO, private val favDao: FavDAO, private val postponeDao: PostponeDAO): IMoviesRepository {
     private val favMovies: MutableSet<Int> = mutableSetOf()
     private val checkedMovies: MutableSet<Int> = mutableSetOf()
     private val postponedMovies: HashMap<Int, Long> = HashMap()
@@ -17,80 +19,79 @@ class MoviesRepository(private val moviesDao: MovieDAO?, private val favDao: Fav
     var page = 0
 
     val cachedMovies: Single<List<MovieDTO>>?
-        get() = moviesDao?.getAll()
+        get() = moviesDao.getAll()
 
-    fun getExact(movieId: Int) = moviesDao?.read(movieId)
+    fun getExact(movieId: Int) = moviesDao.read(movieId)
 
+    @SuppressLint("CheckResult")
     fun addToCache(movies: List<MovieDTO>): Single<List<Long>?>? {
-        moviesDao?.let { dao ->
-            val single = dao
-                .create(movies)
-                .subscribeOn(Schedulers.io())
-            single
-                .subscribe { _ ->
-                    pref.edit().apply {
-                        this.putLong(MOVIES_LAST_ACCESS, Date().time)
-                        this.apply()
-                    }
+        val single = moviesDao
+            .create(movies)
+            .subscribeOn(Schedulers.io())
+        single
+            .subscribe { _ ->
+                pref.edit().apply {
+                    this.putLong(MOVIES_LAST_ACCESS, Date().time)
+                    this.apply()
                 }
-            return single
-        }
-        return null
+            }
+        return single
     }
 
+    @SuppressLint("CheckResult")
     fun clearCache() {
-        moviesDao?.let { dao ->
-            dao
-                .clear()
-                .subscribeOn(Schedulers.io())
-                .subscribe {
-                    pref.edit().apply {
-                        this.remove(MOVIES_LAST_ACCESS)
-                        this.apply()
-                    }
+        moviesDao
+            .clear()
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                pref.edit().apply {
+                    this.remove(MOVIES_LAST_ACCESS)
+                    this.apply()
                 }
-        }
+            }
     }
 
     fun inFav(id: Int) = favMovies.contains(id)
     fun changeFav(id: Int) {
         if (favMovies.contains(id)) {
             favMovies.remove(id)
-            favDao?.delete(FavDTO(id))
+            favDao.delete(FavDTO(id))
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         } else {
             favMovies.add(id)
-            favDao?.add(FavDTO(id))
+            favDao.add(FavDTO(id))
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         }
     }
 
     fun isPostponed(id: Int): Pair<Boolean, Long?> = (System.currentTimeMillis() < postponedMovies[id] ?: 0) to postponedMovies[id]
     fun setPostpone(id: Int, date: Date) {
         postponedMovies[id] = date.time
-        postponeDao?.add(PostponeDTO(id, date.time))
+        postponeDao.add(PostponeDTO(id, date.time))
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     fun inChecked(id: Int) = checkedMovies.contains(id)
     fun addToChecked(id: Int) = checkedMovies.add(id)
 
     init {
-        favDao?.let { dao ->
-            dao
-                .getAll()
-                .subscribeOn(Schedulers.io())
-                .subscribe { data ->
-                    data.forEach { favMovies.add(it.movieId) }
-                }
-        }
+        favDao
+            .getAll()
+            .subscribeOn(Schedulers.io())
+            .subscribe { data ->
+                data.forEach { favMovies.add(it.movieId) }
+            }
 
 
-        postponeDao?.let { dao ->
-            dao
-                .getAll()
-                .subscribeOn(Schedulers.io())
-                .subscribe { data ->
-                    data.forEach { postponedMovies[it.movieId] = it.date }
-                }
-        }
+        postponeDao
+            .getAll()
+            .subscribeOn(Schedulers.io())
+            .subscribe { data ->
+                data.forEach { postponedMovies[it.movieId] = it.date }
+            }
     }
 
     companion object {

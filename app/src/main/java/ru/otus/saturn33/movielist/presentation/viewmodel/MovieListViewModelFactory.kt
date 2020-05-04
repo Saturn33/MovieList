@@ -1,14 +1,22 @@
 package ru.otus.saturn33.movielist.presentation.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import ru.otus.saturn33.movielist.App
+import javax.inject.Inject
 
-class MovieListViewModelFactory(private val application: Application, private val message: String?) : ViewModelProvider.Factory {
+class MovieListViewModelFactory : ViewModelProvider.Factory {
+    @Inject
+    lateinit var movieListViewModel: MovieListViewModel
+
+    init {
+        App.instance!!.appComponent.inject(this)
+    }
+
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass == MovieListViewModel::class.java) {
             @Suppress("UNCHECKED_CAST")
-            return MovieListViewModel(application, message) as T
+            return movieListViewModel as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
