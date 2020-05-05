@@ -29,7 +29,6 @@ class App : Application() {
             .netModule(NetModule())
             .dBModule(DBModule(this))
             .build()
-        appComponent.inject(this)
     }
 
     private fun initFCM() {

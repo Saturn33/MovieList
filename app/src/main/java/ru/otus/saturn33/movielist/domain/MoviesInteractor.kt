@@ -26,41 +26,45 @@ class MoviesInteractor @Inject constructor(): IMoviesInteractor {
     lateinit var moviesRepository: MoviesRepository
 
     @SuppressLint("CheckResult")
-    fun getTopRatedMovies(page: Int = 1, callback: GetMoviesCallback) {
+    fun getTopRatedMovies(page: Int = 1): Single<List<MovieDTO>> {
         val pref = App.instance!!.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE)
         val lastAccess = pref.getLong(MOVIES_LAST_ACCESS, 0)
         val now = Date().time
-
-        if (now - lastAccess > MOVIES_CACHE_TTL) {
-            movieDBService.getTopRatedMovies(page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ response ->
-                    if (response.page > moviesRepository.page)
-                        moviesRepository.page = response.page
-                    response.results?.let {
-                        moviesRepository.addToCache(it)?.let { single ->
-                            single.subscribe { _ ->
-                                moviesRepository.cachedMovies?. let {single ->
-                                    single
-                                        .subscribeOn(Schedulers.io())
-                                        .subscribe { data -> callback.onSuccess(data)}
+        val ret = Single.create<List<MovieDTO>> { emitter ->
+            if (now - lastAccess > MOVIES_CACHE_TTL) {
+                movieDBService.getTopRatedMovies(page)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ response ->
+                        if (response.page > moviesRepository.page)
+                            moviesRepository.page = response.page
+                        response.results?.let {
+                            moviesRepository.addToCache(it)?.let { single ->
+                                single.subscribe { _ ->
+                                    moviesRepository.cachedMovies?.let { single ->
+                                        single
+                                            .subscribeOn(Schedulers.io())
+                                            .subscribe { data ->
+                                                emitter.onSuccess(data)
+                                            }
+                                    }
                                 }
                             }
                         }
-                    }
 
 
-                }, { error ->
-                    callback.onError(error.message ?: "unknown")
-                })
-        } else {
-            moviesRepository.cachedMovies?.let {single ->
-                single
-                    .subscribeOn(Schedulers.io())
-                    .subscribe { data -> callback.onSuccess(data)}
+                    }, { error ->
+                        emitter.onError(Throwable(error.message ?: "unknown"))
+                    })
+            } else {
+                moviesRepository.cachedMovies?.let { single ->
+                    single
+                        .subscribeOn(Schedulers.io())
+                        .subscribe { data -> emitter.onSuccess(data) }
+                }
             }
         }
+        return ret
     }
 
     fun getExact(movieId: Int): Single<MovieDTO?>? {
@@ -86,9 +90,4 @@ class MoviesInteractor @Inject constructor(): IMoviesInteractor {
     }
 
     fun getBaseImageURL(): String = MoviesRepository.BASE_IMAGE_URL
-
-    interface GetMoviesCallback {
-        fun onSuccess(movies: List<MovieDTO>)
-        fun onError(error: String)
-    }
 }

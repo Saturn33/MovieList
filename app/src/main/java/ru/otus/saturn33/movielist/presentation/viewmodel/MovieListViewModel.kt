@@ -1,5 +1,6 @@
 package ru.otus.saturn33.movielist.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -104,23 +105,23 @@ class MovieListViewModel(application: Application, private val moviesInteractor:
         toastLiveData.postValue(null)
     }
 
+    @SuppressLint("CheckResult")
     fun onNextPageRequest() {
         if (inUpdateLiveData.value == true) return
         inUpdateLiveData.postValue(true)
-        moviesInteractor.getTopRatedMovies(moviesInteractor.getCurrentPage() + 1,
-            object : MoviesInteractor.GetMoviesCallback {
-                override fun onSuccess(movies: List<MovieDTO>) {
+        moviesInteractor.getTopRatedMovies(moviesInteractor.getCurrentPage() + 1)
+            .subscribe(
+                { movies ->
                     moviesLiveData.postValue(movies)
                     swipeRefresherLiveData.postValue(false)
                     inUpdateLiveData.postValue(false)
-                }
-
-                override fun onError(error: String) {
-                    errorLiveData.postValue(error)
+                },
+                { error ->
+                    errorLiveData.postValue(error.message)
                     swipeRefresherLiveData.postValue(false)
                     inUpdateLiveData.postValue(false)
                 }
-            })
+            )
     }
 
     fun setLastSeenPosition(position: Int) {
