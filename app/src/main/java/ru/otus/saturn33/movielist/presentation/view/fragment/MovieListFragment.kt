@@ -69,9 +69,9 @@ class MovieListFragment : Fragment() {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.try_app))
             }
-            sendIntent.resolveActivity(activity!!.packageManager)?.let {
+//            sendIntent.resolveActivity(requireActivity().packageManager)?.let {
                 startActivity(sendIntent)
-            }
+//            }
         }
 
         viewModel = activity?.let {
@@ -184,7 +184,7 @@ class MovieListFragment : Fragment() {
 
         recyclerView.adapter = moviesAdapter
 
-        getDrawable(context!!, R.drawable.custom_line)?.let {
+        getDrawable(requireContext(), R.drawable.custom_line)?.let {
             recyclerView.addItemDecoration(
                 CustomDecoration(
                     context as Context,

@@ -9,7 +9,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "ru.otus.saturn33.movielist"
@@ -44,7 +44,7 @@ android {
         exclude 'META-INF/atomicfu.kotlin_module'
     }
     testOptions {
-        unitTests.returnDefaultValues = true
+//        unitTests.returnDefaultValues = true
         unitTests.includeAndroidResources = true
     }
 }
@@ -63,7 +63,18 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'androidx.test.ext:junit-ktx:1.1.1'
+
+    testImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
+    testImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
+
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
+    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.2.0'
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:3.12.6"
+
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
@@ -91,4 +102,5 @@ dependencies {
     testImplementation "org.powermock:powermock-classloading-xstream:2.0.7"
     testImplementation 'org.robolectric:robolectric:4.3'
 
+    debugImplementation 'androidx.fragment:fragment-testing:1.2.4'
 }
