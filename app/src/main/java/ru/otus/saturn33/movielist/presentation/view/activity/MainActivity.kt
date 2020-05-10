@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -19,6 +20,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.otus.saturn33.movielist.R
 import ru.otus.saturn33.movielist.data.entity.MovieDTO
 import ru.otus.saturn33.movielist.presentation.dialog.ExitDialog
+import ru.otus.saturn33.movielist.presentation.idlingresource.SimpleIdlingResource
 import ru.otus.saturn33.movielist.presentation.interfaces.ActionBarProvider
 import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper
 import ru.otus.saturn33.movielist.presentation.notification.NotificationHelper.DETAILED_REQUEST_ACTION
@@ -38,6 +40,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
+    @VisibleForTesting
+    val idlingResource = SimpleIdlingResource()
 
     private fun setThemeCycle() {
         themeMode =
@@ -52,6 +56,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        idlingResource.setIdleState(false)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config)
@@ -105,6 +110,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
                             "list" -> openList()
                             else -> openList()
                         }
+                        idlingResource.setIdleState(true)
                     }
                 }
             }
