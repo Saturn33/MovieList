@@ -44,4 +44,5 @@
     <string name="detailed_notification_channel_description">New movie notification</string>
     <string name="title_detailed">New movie</string>
     <string name="text_detailed">We are recommend to view movie</string>
+    <string name="buy_paid">Buy paid version</string>
 </resources>

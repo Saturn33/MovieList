@@ -44,4 +44,5 @@
     <string name="detailed_notification_channel_description">Уведомление об информации о фильме</string>
     <string name="title_detailed">Новый фильм</string>
     <string name="text_detailed">Рекомендуем посмотреть фильм</string>
+    <string name="buy_paid">Приобретите платную версию</string>
 </resources>
