@@ -12,7 +12,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion "29.0.3"
     defaultConfig {
-        applicationId "ru.otus.saturn33.movielist"
+        applicationId "app.whiletrue.movielist"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1

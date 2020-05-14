@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.otus.saturn33.movielist">
+    package="app.whiletrue.movielist">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name=".App"
+        android:name="app.whiletrue.movielist.App"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,14 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".service.FirebaseMessageService"
+            android:name="app.whiletrue.movielist.service.FirebaseMessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name=".receiver.PostponeBroadcastReceiver" />
-        <activity android:name=".presentation.view.activity.MainActivity">
+        <receiver android:name="app.whiletrue.movielist.receiver.PostponeBroadcastReceiver" />
+        <activity android:name="app.whiletrue.movielist.presentation.view.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
