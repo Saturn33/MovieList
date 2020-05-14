@@ -1,6 +1,7 @@
 package ru.otus.saturn33.movielist.presentation.view.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -75,7 +76,13 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         navigationView.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null && intent?.action != DETAILED_REQUEST_ACTION && intent?.action != POSTPONE_REQUEST_ACTION) {
-            checkConfig()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                openList()
+            } else {
+                mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config).addOnCompleteListener {
+                    checkConfig()
+                }
+            }
         }
         updateToolBar(activityToolbar)
         initDrawer(findViewById(R.id.toolbar))
@@ -107,6 +114,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
                         }
                     }
                 }
+            } else {
+                openList()
             }
         }
     }
