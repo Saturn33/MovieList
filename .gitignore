@@ -6,6 +6,7 @@ build/
 !**/src/main/**
 !**/src/test/**
 /local.properties
+/gradle.properties
 google-services.json
 
 ### STS ###
