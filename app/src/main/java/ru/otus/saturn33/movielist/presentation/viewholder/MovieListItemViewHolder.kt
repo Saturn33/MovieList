@@ -34,6 +34,7 @@ class MovieListItemViewHolder(
         ratingTv.text = item.rating.toString()
         titleTv.setTextColor(if (item.checked) colors.first else colors.second)
         inFavIv.setImageResource(if (item.inFav) R.drawable.favorite_yes else R.drawable.favorite_no)
+        inFavIv.tag = if (item.inFav) R.drawable.favorite_yes else R.drawable.favorite_no
         postponeIv.setImageResource(if (item.postponed) R.drawable.postpone_yes else R.drawable.postpone_no)
 
         itemView.setOnClickListener {

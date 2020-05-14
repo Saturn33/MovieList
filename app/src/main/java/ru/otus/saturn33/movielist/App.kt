@@ -1,14 +1,14 @@
 package ru.otus.saturn33.movielist
 
 import android.app.Application
-import android.util.Log
-import com.google.firebase.iid.FirebaseInstanceId
+//import android.util.Log
+//import com.google.firebase.iid.FirebaseInstanceId
 import ru.otus.saturn33.movielist.di.component.AppComponent
 import ru.otus.saturn33.movielist.di.component.DaggerAppComponent
 import ru.otus.saturn33.movielist.di.module.AppModule
 import ru.otus.saturn33.movielist.di.module.DBModule
 import ru.otus.saturn33.movielist.di.module.NetModule
-import ru.otus.saturn33.movielist.service.FirebaseMessageService
+//import ru.otus.saturn33.movielist.service.FirebaseMessageService
 
 class App : Application() {
 
@@ -20,7 +20,7 @@ class App : Application() {
         instance = this
 
         initDI()
-        initFCM()
+//        initFCM()
     }
 
     private fun initDI() {
@@ -31,11 +31,13 @@ class App : Application() {
             .build()
     }
 
+/*
     private fun initFCM() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             Log.d(FirebaseMessageService.TAG, "Current token: ${it.token}")
         }
     }
+*/
 
     companion object {
         var instance: App? = null
