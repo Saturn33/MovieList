@@ -12,19 +12,6 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/make_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_marginStart="@dimen/margin_small"
-            android:drawableStart="@drawable/create_error"
-            android:drawablePadding="@dimen/margin_small"
-            android:text="@string/make_exception"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/invite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -39,7 +39,6 @@
     <string name="time_to_watch">It\'s a time to watch</string>
     <string name="nav_postponed">Postponed</string>
     <string name="title_postponed">Postponed</string>
-    <string name="make_exception">Exception</string>
     <string name="detailed_notification_channel_name">Movie information</string>
     <string name="detailed_notification_channel_description">New movie notification</string>
     <string name="title_detailed">New movie</string>

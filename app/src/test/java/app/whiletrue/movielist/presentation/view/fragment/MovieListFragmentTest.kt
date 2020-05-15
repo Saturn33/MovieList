@@ -23,18 +23,6 @@ import org.robolectric.Shadows.shadowOf
 @RunWith(AndroidJUnit4::class)
 class MovieListFragmentTest {
 
-    @Test(expected = ArrayIndexOutOfBoundsException::class)
-    fun testExplicitException() {
-
-        val fragmentArgs = Bundle()
-        val scenario = launchFragmentInContainer<MovieListFragment>(fragmentArgs)
-
-        scenario.onFragment { fragment ->
-            fragment.make_error.performClick()
-        }
-    }
-
-
     @Test
     fun testAfterSwipe_Is_In_Refreshing_State() {
         val fragmentArgs = Bundle()
