@@ -15,6 +15,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import app.whiletrue.movielist.BuildConfig
 import app.whiletrue.movielist.R
 import app.whiletrue.movielist.data.entity.MovieDTO
 import app.whiletrue.movielist.presentation.dialog.ExitDialog
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     NavigationView.OnNavigationItemSelectedListener,
     ActionBarProvider {
     private var themeMode = AppCompatDelegate.MODE_NIGHT_NO
-    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     @VisibleForTesting
     val idlingResource = SimpleIdlingResource()
@@ -58,7 +59,8 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         idlingResource.setIdleState(false)
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        if (!BuildConfig.DEBUG)
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config)
 
@@ -104,7 +106,9 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
                 mFirebaseRemoteConfig.activate().addOnCompleteListener { taskActivation ->
                     if (taskActivation.isSuccessful) {
                         val startScreen = mFirebaseRemoteConfig.getString("starting_screen")
-                        Log.d("REMOTE!", startScreen)
+                        if (!BuildConfig.DEBUG) {
+                            Log.d("REMOTE!", startScreen)
+                        }
                         when (startScreen) {
                             "favorites" -> {
                                 openList()
@@ -238,7 +242,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
                 putString(FirebaseAnalytics.Param.ITEM_NAME, item.name)
                 putString(FirebaseAnalytics.Param.CONTENT_TYPE, "movie detail")
             }
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle)
+            mFirebaseAnalytics?.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle)
         }
         supportFragmentManager
             .beginTransaction()
@@ -252,7 +256,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "favorites list")
         }
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
+        mFirebaseAnalytics?.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieFavoritesFragment(), MovieFavoritesFragment.TAG)
@@ -264,7 +268,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "postponed list")
         }
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
+        mFirebaseAnalytics?.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MoviePostponedFragment(), MoviePostponedFragment.TAG)
@@ -276,7 +280,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.OnDetailedClickListe
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, "main movie list")
         }
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
+        mFirebaseAnalytics?.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)

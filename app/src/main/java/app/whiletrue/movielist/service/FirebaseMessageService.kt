@@ -3,6 +3,7 @@ package app.whiletrue.movielist.service
 import android.annotation.SuppressLint
 import android.util.Log
 import app.whiletrue.movielist.App
+import app.whiletrue.movielist.BuildConfig
 import app.whiletrue.movielist.domain.MoviesInteractor
 import app.whiletrue.movielist.presentation.notification.NotificationHelper
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -18,19 +19,25 @@ class FirebaseMessageService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        Log.d(TAG, "New token: $token")
-        println(token)
+        if (!BuildConfig.DEBUG) {
+            Log.d(TAG, "New token: $token")
+            println(token)
+        }
     }
 
     @SuppressLint("CheckResult")
     override fun onMessageReceived(message: RemoteMessage) {
         val movieId = message.data["movieId"]?.toInt() ?: 0
-        Log.d(TAG, "MovieId: $movieId")
+        if (!BuildConfig.DEBUG) {
+            Log.d(TAG, "MovieId: $movieId")
+        }
         val sMovie = moviesInteractor.getExact(movieId)
         sMovie?.subscribe { movie ->
             if (movie == null) return@subscribe
             movie.imageURL = if (movie.imagePath == null) null else "${moviesInteractor.getBaseImageURL()}${movie.imagePath}"
-            Log.d(TAG, movie.toString())
+            if (!BuildConfig.DEBUG) {
+                Log.d(TAG, movie.toString())
+            }
             NotificationHelper.detailedMovieNotification(App.instance!!.applicationContext, movie, message.data["title"], message.data["text"])
         }
     }
