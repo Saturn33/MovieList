@@ -23,7 +23,7 @@ class NetModule {
 
     @Provides
     fun provideOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
-        val client = OkHttpClient.Builder()
+        return OkHttpClient.Builder()
             .connectTimeout(2, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 chain.proceed(
@@ -35,8 +35,6 @@ class NetModule {
             }
             .addInterceptor(interceptor)
             .build()
-
-        return client
     }
 
     @Provides

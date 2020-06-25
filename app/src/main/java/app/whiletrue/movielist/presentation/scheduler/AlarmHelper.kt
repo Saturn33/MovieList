@@ -32,9 +32,11 @@ object AlarmHelper {
 
         //получение уведомления в указанную дату в 10 часов
         //если указали дату меньше, чем текущая, удаляем аларм, иначе устанавливаем
-        if (date.time < System.currentTimeMillis())
+        if (date.time < System.currentTimeMillis()) {
             mgr.cancel(pendIntent)
-        else
+        }
+        else {
             mgr.set(AlarmManager.RTC, date.time, pendIntent)
+        }
     }
 }

@@ -30,18 +30,19 @@ class MoviesInteractor @Inject constructor(): IMoviesInteractor {
         val pref = App.instance!!.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE)
         val lastAccess = pref.getLong(MOVIES_LAST_ACCESS, 0)
         val now = Date().time
-        val ret = Single.create<List<MovieDTO>> { emitter ->
+        return Single.create { emitter ->
             if (now - lastAccess > MOVIES_CACHE_TTL) {
                 movieDBService.getTopRatedMovies(page)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ response ->
-                        if (response.page > moviesRepository.page)
+                        if (response.page > moviesRepository.page) {
                             moviesRepository.page = response.page
-                        response.results?.let {
-                            moviesRepository.addToCache(it)?.let { single ->
+                        }
+                        response.results?.let<List<MovieDTO>, Unit> {
+                            moviesRepository.addToCache(it)?.let<Single<List<Long>?>, Unit> { single ->
                                 single.subscribe { _ ->
-                                    moviesRepository.cachedMovies?.let { single ->
+                                    moviesRepository.cachedMovies?.let<Single<List<MovieDTO>>, Unit> { single ->
                                         single
                                             .subscribeOn(Schedulers.io())
                                             .subscribe { data ->
@@ -64,7 +65,6 @@ class MoviesInteractor @Inject constructor(): IMoviesInteractor {
                 }
             }
         }
-        return ret
     }
 
     fun getExact(movieId: Int): Single<MovieDTO?>? {
@@ -73,13 +73,16 @@ class MoviesInteractor @Inject constructor(): IMoviesInteractor {
 
     fun checkInFav(movie: MovieDTO) = moviesRepository.inFav(movie.id)
     fun changeFav(movie: MovieDTO) = moviesRepository.changeFav(movie.id)
+
     fun checkPostponed(movie: MovieDTO) = moviesRepository.isPostponed(movie.id)
     fun setPostpone(movie: MovieDTO, date: Date) {
         moviesRepository.setPostpone(movie.id, date)
         AlarmHelper.addPostponeMovieAlarm(App.instance?.applicationContext!!, movie, date)
     }
+
     fun checkInChecked(movie: MovieDTO) = moviesRepository.inChecked(movie.id)
     fun addToChecked(movie: MovieDTO) = moviesRepository.addToChecked(movie.id)
+
     fun getCurrentPage() = moviesRepository.page
     fun setCurrentPage(page: Int) {
         moviesRepository.page = page

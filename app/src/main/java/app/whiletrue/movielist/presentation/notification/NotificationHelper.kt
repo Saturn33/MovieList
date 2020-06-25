@@ -28,8 +28,7 @@ object NotificationHelper {
     private fun createPostponeNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.postpone_notification_channel_name)
-            val descriptionText =
-                context.getString(R.string.postpone_notification_channel_description)
+            val descriptionText = context.getString(R.string.postpone_notification_channel_description)
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(POSTPONE_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
