@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_small"
+    android:background="@color/mainItemBackground">
+
+    <ImageView
+        android:id="@+id/imageIv"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:contentDescription="@string/movie_image"
+        android:scaleType="centerInside"
+        android:src="@drawable/movie_filler"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_mid"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:layout_marginEnd="@dimen/margin_mid"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageIv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="title" />
+
+    <ImageView
+        android:id="@+id/ratingIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_mid"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:contentDescription="@string/rating"
+        android:src="@drawable/star"
+        app:layout_constraintStart_toEndOf="@id/imageIv"
+        app:layout_constraintTop_toBottomOf="@id/titleTv" />
+
+    <TextView
+        android:id="@+id/ratingTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintBottom_toBottomOf="@id/ratingIv"
+        app:layout_constraintStart_toEndOf="@id/ratingIv"
+        app:layout_constraintTop_toTopOf="@id/ratingIv"
+        tools:text="8.5" />
+
+    <ImageView
+
+        android:id="@+id/postponeIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_mid"
+        android:contentDescription="@string/postpone"
+        android:src="@drawable/postpone_no"
+        app:layout_constraintBottom_toTopOf="@id/inFavIv"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+
+        android:id="@+id/inFavIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_mid"
+        android:contentDescription="@string/is_favorite"
+        android:src="@drawable/favorite_no"
+        android:stateListAnimator="@animator/like_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

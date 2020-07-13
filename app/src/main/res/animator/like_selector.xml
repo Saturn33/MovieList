@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <set android:ordering="together">
+            <objectAnimator
+                android:duration="@android:integer/config_shortAnimTime"
+                android:interpolator="@android:interpolator/bounce"
+                android:propertyName="scaleX"
+                android:valueTo="1.5f"
+                android:valueType="floatType" />
+            <objectAnimator
+                android:duration="@android:integer/config_shortAnimTime"
+                android:interpolator="@android:interpolator/bounce"
+                android:propertyName="scaleY"
+                android:valueTo="1.5f"
+                android:valueType="floatType" />
+        </set>
+    </item>
+    <item android:state_pressed="false">
+        <set android:ordering="together">
+            <objectAnimator
+                android:duration="@android:integer/config_longAnimTime"
+                android:propertyName="scaleX"
+                android:valueTo="1f"
+                android:valueType="floatType" />
+            <objectAnimator
+                android:duration="@android:integer/config_longAnimTime"
+                android:propertyName="scaleY"
+                android:valueTo="1f"
+                android:valueType="floatType" />
+        </set>
+    </item>
+</selector>
